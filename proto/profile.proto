@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package profile;
+
+import "empty.proto";
+
+service ProfileService {
+  rpc findAll(Empty) returns (ProfilesMessage);
+  rpc findById(ProfileId) returns (ProfileMessage);
+  rpc create(ProfileDto) returns (ProfileMessage);
+  rpc update(ProfileDto) returns (ProfileMessage);
+  rpc delete(ProfileId) returns (Empty);
+}
+
+message ProfileMessage {
+  string id = 1;
+  string name = 2;
+  string avatar = 3;
+  string bio = 4;
+  int64 dob = 5;
+  string country = 6;
+  string gender = 7;
+  string alias = 8;
+}
+
+message ProfilesMessage {
+  repeated ProfileMessage profiles = 1;
+}
+
+message ProfileId {
+  string id = 1;
+}
+
+message ProfileDto {
+  optional string name = 1;
+  optional string avatar = 2;
+  optional string bio = 3;
+  optional int64 dob = 4;
+  optional string country = 5;
+  optional string gender = 6;
+  optional string alias = 7;
+  string userId = 8;
+}
+
