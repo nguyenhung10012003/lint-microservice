@@ -30,7 +30,6 @@ export const extractSelectString = (select?: string[]) => {
 };
 
 export const extractUserSelect = (userSelect: UserSelectQuery) => {
-  console.log(extractSelectString(userSelect.select));
   if (!userSelect.profileSelect) return extractSelectString(userSelect.select);
   return {
     ...extractSelectString(userSelect.select),

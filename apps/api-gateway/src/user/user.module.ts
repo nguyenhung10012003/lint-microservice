@@ -1,24 +1,12 @@
-import { USER_PACKAGE_NAME } from '@app/common/types/user';
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { join } from 'path';
+import { GrpcClientModule } from '../grpc-client/grpc-client.module';
+import { AccessTokenStrategy } from '../lib/strategies/access-token.strategy';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [
-    ClientsModule.register([
-      {
-        name: USER_PACKAGE_NAME,
-        transport: Transport.GRPC,
-        options: {
-          package: USER_PACKAGE_NAME,
-          protoPath: join(__dirname, '../user/user.proto'),
-        },
-      },
-    ]),
-  ],
+  imports: [GrpcClientModule],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, AccessTokenStrategy],
 })
 export class UserModule {}

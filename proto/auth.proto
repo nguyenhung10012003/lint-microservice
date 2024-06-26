@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthService {
+  rpc signin(SigninRequest) returns (Token) {}
+  rpc refreshToken(RefreshTokenRequest) returns (Token) {}
+}
+
+message SigninRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message Token {
+  string token = 1;
+  string type = 2;
+  string refreshToken = 3;
+  string issuedAt = 4;
+  string expireAt = 5;
+}
+
+message RefreshTokenRequest {
+  string refreshToken = 1;
+}
+

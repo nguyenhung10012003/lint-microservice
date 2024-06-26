@@ -1,8 +1,8 @@
 import { UsersMessage } from '@app/common/types/user';
+import { hashPassword } from '@app/common/utils/hashing';
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/prisma-user-client';
 import { PrismaService } from '../prisma.service';
-import { hashPassword } from '../utils/hashing';
 import { UserCreateInput } from './model/user.input';
 import { UserModel } from './model/user.model';
 
@@ -19,7 +19,6 @@ export class UserService {
     select?: Prisma.UserSelect;
     include?: Prisma.UserInclude;
   }): Promise<UsersMessage> {
-    console.log(params);
     const users: UserModel[] = await this.prismaService.user.findMany(params);
     return {
       users: users.map((user) => {
@@ -42,6 +41,18 @@ export class UserService {
         id,
       },
     });
+  }
+
+  async findOne(data: Prisma.UserWhereUniqueInput) {
+    const user = await this.prismaService.user.findUnique({
+      where: data,
+    });
+
+    return {
+      ...user,
+      createdAt: user?.createdAt.getTime(),
+      updatedAt: user?.updatedAt.getTime(),
+    };
   }
 
   async create(data: Prisma.UserCreateInput) {

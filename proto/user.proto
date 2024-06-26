@@ -5,6 +5,7 @@ import "profile.proto";
 
 service UserService {
     rpc findAll(FindAllParams) returns (UsersMessage);
+    rpc findOne(FindOneParams) returns (UserMessage);
     rpc findById(UserId) returns (UserMessage);
     rpc create(CreateUserDto) returns (UserMessage);
     rpc update(UpdateUserDto) returns (UserMessage);
@@ -45,6 +46,14 @@ message FindAllParams {
     optional UserSelect select = 3;
     optional UserOrderBy orderBy = 4;
     optional UserWhere where = 5;
+}
+
+message FindOneParams {
+    optional string id = 1;
+    optional string email = 2;
+    optional string password = 3;
+    optional NumberFilter createdAt = 4;
+    optional NumberFilter updatedAt = 5; 
 }
 
 message UserSelect {

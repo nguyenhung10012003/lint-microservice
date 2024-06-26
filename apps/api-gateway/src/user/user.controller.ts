@@ -5,9 +5,11 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { GrpcToHttpInterceptor } from 'nestjs-grpc-exceptions';
+import { AccessTokenGuard } from '../lib/guards/access-token.guard';
 import { UserSelectQuery, extractUserSelect } from '../types/select.query';
 import { SkipQuery } from '../types/skip.query';
 import { UserSortQuery } from '../types/sort.query';
@@ -17,6 +19,7 @@ import { UserService } from './user.service';
 
 @Controller('user')
 @UseInterceptors(GrpcToHttpInterceptor)
+@UseGuards(AccessTokenGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
@@ -28,7 +31,6 @@ export class UserController {
       UserWhereQuery &
       UserSortQuery,
   ) {
-    console.log();
     return this.userService.findAll({
       skip: query.skip,
       take: query.take,

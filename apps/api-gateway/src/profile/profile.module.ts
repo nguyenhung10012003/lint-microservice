@@ -1,23 +1,10 @@
-import { PROFILE_PACKAGE_NAME } from '@app/common/types/profile';
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { join } from 'path';
+import { GrpcClientModule } from '../grpc-client/grpc-client.module';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 
 @Module({
-  imports: [
-    ClientsModule.register([
-      {
-        name: PROFILE_PACKAGE_NAME,
-        transport: Transport.GRPC,
-        options: {
-          package: PROFILE_PACKAGE_NAME,
-          protoPath: join(__dirname, '../user/profile.proto'),
-        },
-      },
-    ]),
-  ],
+  imports: [GrpcClientModule],
   controllers: [ProfileController],
   providers: [ProfileService],
 })

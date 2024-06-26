@@ -1,4 +1,4 @@
-import { Prisma } from 'prisma/generated/prisma-user-client';
+import { Prisma } from '@prisma/prisma-user-client';
 import { z } from 'zod';
 
 export const UserCreateInput: z.ZodObject<

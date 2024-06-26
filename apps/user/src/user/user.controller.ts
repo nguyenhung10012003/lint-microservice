@@ -1,6 +1,7 @@
 import {
   CreateUserDto,
   FindAllParams,
+  FindOneParams,
   UpdateUserDto,
   UserId,
   UserMessage,
@@ -39,6 +40,17 @@ export class UserController implements UserServiceController {
       },
     });
   }
+
+  findOne(
+    request: FindOneParams,
+  ): UserMessage | Promise<UserMessage> | Observable<UserMessage> {
+    return this.userService.findOne({
+      email: request.email,
+      password: request.password,
+      id: request.id,
+    });
+  }
+
   findById(
     request: UserId,
   ): UserMessage | Promise<UserMessage> | Observable<UserMessage> {

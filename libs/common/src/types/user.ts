@@ -53,6 +53,14 @@ export interface FindAllParams {
   where?: UserWhere | undefined;
 }
 
+export interface FindOneParams {
+  id?: string | undefined;
+  email?: string | undefined;
+  password?: string | undefined;
+  createdAt?: NumberFilter | undefined;
+  updatedAt?: NumberFilter | undefined;
+}
+
 export interface UserSelect {
   id?: boolean | undefined;
   email?: boolean | undefined;
@@ -102,6 +110,8 @@ export const USER_PACKAGE_NAME = "user";
 export interface UserServiceClient {
   findAll(request: FindAllParams): Observable<UsersMessage>;
 
+  findOne(request: FindOneParams): Observable<UserMessage>;
+
   findById(request: UserId): Observable<UserMessage>;
 
   create(request: CreateUserDto): Observable<UserMessage>;
@@ -114,6 +124,8 @@ export interface UserServiceClient {
 export interface UserServiceController {
   findAll(request: FindAllParams): Promise<UsersMessage> | Observable<UsersMessage> | UsersMessage;
 
+  findOne(request: FindOneParams): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+
   findById(request: UserId): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 
   create(request: CreateUserDto): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
@@ -125,7 +137,7 @@ export interface UserServiceController {
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["findAll", "findById", "create", "update", "delete"];
+    const grpcMethods: string[] = ["findAll", "findOne", "findById", "create", "update", "delete"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);
