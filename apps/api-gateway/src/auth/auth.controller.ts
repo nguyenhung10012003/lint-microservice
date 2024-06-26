@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { RefreshTokenGuard } from '../lib/guards/refresh-token.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -15,6 +16,7 @@ export class AuthController {
     return this.authService.signup(data);
   }
 
+  @UseGuards(RefreshTokenGuard)
   @Post('refresh-token')
   refreshToken(@Body() data: { refreshToken: string }) {
     return this.authService.refreshToken(data);

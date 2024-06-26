@@ -21,6 +21,6 @@ export class AuthController implements AuthServiceController {
   refreshToken(
     request: RefreshTokenRequest,
   ): Token | Observable<Token> | Promise<Token> {
-    throw new Error('Method not implemented.');
+    return this.authService.validateRefreshToken(request.refreshToken);
   }
 }

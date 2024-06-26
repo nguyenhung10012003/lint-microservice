@@ -21,6 +21,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     const refreshToken = authorizationHeader
       ? authorizationHeader.replace('Bearer', '').trim()
       : '';
+
     return { ...payload, refreshToken };
   }
 }

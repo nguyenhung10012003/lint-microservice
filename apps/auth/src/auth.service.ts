@@ -56,18 +56,18 @@ export class AuthService implements OnModuleInit {
   }
 
   async validateRefreshToken(token: string): Promise<Token> {
-    const payload = await this.jwtService.verifyAsync(token, {
+    const { sub, username } = await this.jwtService.verifyAsync(token, {
       secret: process.env.JWT_REFRESH_TOKEN_SECRET,
     });
     return {
       token: await this.createToken(
-        payload,
+        { sub, username },
         process.env.JWT_ACCESS_TOKEN_SECRET,
         process.env.JWT_ACCESS_TOKEN_EXPIRE,
       ),
       type: 'Bearer',
       refreshToken: await this.createToken(
-        payload,
+        { sub, username },
         process.env.JWT_REFRESH_TOKEN_SECRET,
         process.env.JWT_REFRESH_TOKEN_EXPIRE,
       ),
