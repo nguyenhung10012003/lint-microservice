@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package relationship;
+
+service FollowingService {
+  rpc create(FollowDto) returns (Follow) {}
+  rpc delete(FollowWhereUnique) returns (Follow) {}
+  rpc find(FollowWhere) returns (Follows) {}
+  rpc count(FollowWhere) returns (Count) {}
+}
+
+message FollowDto {
+  string followerId = 1;
+  string followingId = 2;
+}
+
+message Follow {
+  string id = 1;
+  string followerId = 2;
+  string followingId = 3;
+}
+
+message Follows {
+  repeated Follow follows = 1;
+}
+
+message Count {
+  int32 count = 1;
+}
+
+message FollowWhereUnique {
+  string id = 1;
+  optional string followerId = 2;
+  optional string followingId = 3;
+  repeated FollowWhere and = 4;
+}
+
+message FollowWhere {
+  optional string id = 1;
+  optional string followerId = 2;
+  optional string followingId = 3;
+  repeated FollowWhere and = 4;
+}

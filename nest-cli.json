@@ -60,6 +60,20 @@
         ],
         "watchAssets": true
       }
+    },
+    "relationship": {
+      "type": "application",
+      "root": "apps/relationship",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/relationship/tsconfig.app.json",
+        "assets": [
+          "certificate/*.pem",
+          "proto/*.proto"
+        ],
+        "watchAssets": true
+      }
     }
   }
 }

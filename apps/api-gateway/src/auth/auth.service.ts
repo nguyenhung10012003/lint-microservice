@@ -1,24 +1,17 @@
-import {
-  AUTH_PACKAGE_NAME,
-  AUTH_SERVICE_NAME,
-  AuthServiceClient,
-} from '@app/common/types/auth';
-import {
-  USER_PACKAGE_NAME,
-  USER_SERVICE_NAME,
-  UserServiceClient,
-} from '@app/common/types/user';
+import { AUTH_SERVICE_NAME, AuthServiceClient } from '@app/common/types/auth';
+import { USER_SERVICE_NAME, UserServiceClient } from '@app/common/types/user';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientGrpc } from '@nestjs/microservices';
+import { MicroService } from '../grpc-client/microservice';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
   private authClient: AuthServiceClient;
   private userClient: UserServiceClient;
   constructor(
-    @Inject(AUTH_PACKAGE_NAME) private readonly clientAuth: ClientGrpc,
-    @Inject(USER_PACKAGE_NAME) private readonly clientUser: ClientGrpc,
+    @Inject(MicroService.AUTH_SERVICE) private readonly clientAuth: ClientGrpc,
+    @Inject(MicroService.USER_SERVICE) private readonly clientUser: ClientGrpc,
     private readonly jwtService: JwtService,
   ) {}
   onModuleInit() {

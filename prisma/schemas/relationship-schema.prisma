@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/prisma-relationship-client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("RELATIONSHIP_DB_URL")
+}
+
+model follow {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  @@unique([followerId, followingId])
+}
+
+model blacklist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique // user id from user database
+  createdAt DateTime @default(now())
+  list      User[]
+}
+
+type User {
+  id String
+}

@@ -1,14 +1,14 @@
-import { AUTH_PACKAGE_NAME } from '@app/common/types/auth';
+import { RELATIONSHIP_PACKAGE_NAME } from '@app/common/types/following';
 import { PROFILE_PACKAGE_NAME } from '@app/common/types/profile';
 import { USER_PACKAGE_NAME } from '@app/common/types/user';
-import { credentials } from '@grpc/grpc-js';
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import { MicroService } from './microservice';
 
 const GrpcClients = ClientsModule.register([
   {
-    name: AUTH_PACKAGE_NAME,
+    name: MicroService.AUTH_SERVICE,
     transport: Transport.GRPC,
     options: {
       url: process.env.AUTH_URL || '127.0.0.1:5001',
@@ -17,19 +17,27 @@ const GrpcClients = ClientsModule.register([
     },
   },
   {
-    name: PROFILE_PACKAGE_NAME,
+    name: MicroService.USER_SERVICE,
     transport: Transport.GRPC,
     options: {
-      package: 'profile',
-      protoPath: join(__dirname, '../user/profile.proto'),
+      url: process.env.USER_URL || '127.0.0.1:5000',
+      package: [USER_PACKAGE_NAME, PROFILE_PACKAGE_NAME],
+      protoPath: [
+        join(__dirname, '../user/user.proto'),
+        join(__dirname, '../user/profile.proto'),
+      ],
     },
   },
   {
-    name: USER_PACKAGE_NAME,
+    name: MicroService.RELATIONSHIP_SERVICE,
     transport: Transport.GRPC,
     options: {
-      package: 'user',
-      protoPath: join(__dirname, '../user/user.proto'),
+      url: process.env.RELATIONSHIP_URL || '127.0.0.1:5002',
+      package: RELATIONSHIP_PACKAGE_NAME,
+      protoPath: [
+        join(__dirname, '../relationship/blacklist.proto'),
+        join(__dirname, '../relationship/following.proto'),
+      ],
     },
   },
 ]);

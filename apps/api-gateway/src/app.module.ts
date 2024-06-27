@@ -5,11 +5,20 @@ import { GrpcToHttpInterceptor } from 'nestjs-grpc-exceptions';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { BlacklistModule } from './blacklist/blacklist.module';
+import { FollowingModule } from './following/following.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [UserModule, ProfileModule, AuthModule, CommonModule],
+  imports: [
+    UserModule,
+    ProfileModule,
+    AuthModule,
+    CommonModule,
+    FollowingModule,
+    BlacklistModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
@@ -17,7 +26,6 @@ import { UserModule } from './user/user.module';
       provide: APP_INTERCEPTOR,
       useClass: GrpcToHttpInterceptor,
     },
-    
   ],
 })
 export class AppModule {}

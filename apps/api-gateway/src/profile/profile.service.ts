@@ -1,16 +1,16 @@
 import {
-  PROFILE_PACKAGE_NAME,
   PROFILE_SERVICE_NAME,
   ProfileDto,
   ProfileServiceClient,
 } from '@app/common/types/profile';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
+import { MicroService } from '../grpc-client/microservice';
 
 @Injectable()
 export class ProfileService implements OnModuleInit {
   private profilServiceClient: ProfileServiceClient;
-  constructor(@Inject(PROFILE_PACKAGE_NAME) private client: ClientGrpc) {}
+  constructor(@Inject(MicroService.USER_SERVICE) private client: ClientGrpc) {}
   onModuleInit() {
     this.profilServiceClient =
       this.client.getService<ProfileServiceClient>(PROFILE_SERVICE_NAME);

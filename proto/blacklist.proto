@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package relationship;
+
+service BlacklistService {
+  rpc update(BlacklistDto) returns (Blacklist) {}
+  rpc findOne(BlacklistWhereUnique) returns (Blacklist) {}
+}
+
+message BlacklistDto {
+  string userId = 2;
+  repeated UserId list = 3;
+}
+
+message Blacklist {
+  string id = 1;
+  string userId = 2;
+  repeated UserId list = 3;
+}
+
+message BlacklistWhereUnique {
+  optional string id = 1;
+  string userId = 2;
+  repeated BlacklistWhere and = 3;
+}
+
+message BlacklistWhere {
+  optional string id = 1;
+  optional string userId = 2;
+  repeated BlacklistWhere and = 3;
+}
+
+message UserId {
+  string id = 1;
+}
