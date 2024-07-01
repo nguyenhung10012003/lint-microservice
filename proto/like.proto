@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package interaction;
+
+service LikeService {
+  rpc create(LikeDto) returns (Like) {}
+  rpc delete(LikeId) returns (Like) {}
+  rpc find(LikeParams) returns (Likes) {}
+}
+
+message LikeDto {
+  string userId = 1;
+  string postId = 2;
+}
+
+message Like {
+  string id = 1;
+  string userId = 2;
+  string postId = 3;
+  string createdAt = 4;
+}
+
+message LikeWhere {
+  optional string id = 1;
+  optional string userId = 2;
+  optional string postId = 3;
+}
+
+message LikeParams {
+  optional LikeWhere where = 1;
+  optional int32 take = 2;
+  optional int32 skip = 3;
+}
+
+message LikeId {
+  string id = 1;
+}
+
+message Likes {
+  repeated Like likes = 1;
+}

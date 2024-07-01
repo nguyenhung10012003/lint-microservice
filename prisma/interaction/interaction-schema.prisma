@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/prisma-interaction-client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("INTERACTION_DB_URL")
+}
+
+model Like {
+  id        String   @id @map("_id")
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  postId    String
+  content   String
+  replies   Reply[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reply {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  commentId String   @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comment   Comment  @relation(fields: [commentId], references: [id])
+}

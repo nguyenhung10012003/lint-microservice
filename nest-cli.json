@@ -88,6 +88,20 @@
         ],
         "watchAssets": true
       }
+    },
+    "interaction": {
+      "type": "application",
+      "root": "apps/interaction",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/interaction/tsconfig.app.json",
+        "assets": [
+          "certificate/*.pem",
+          "proto/*.proto"
+        ],
+        "watchAssets": true
+      }
     }
   }
 }

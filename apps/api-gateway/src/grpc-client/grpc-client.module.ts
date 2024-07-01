@@ -6,6 +6,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { MicroService } from './microservice';
+import { INTERACTION_PACKAGE_NAME } from '@app/common/types/comment';
 
 const GrpcClients = ClientsModule.register([
   {
@@ -54,6 +55,18 @@ const GrpcClients = ClientsModule.register([
       ],
     },
   },
+  {
+    name: MicroService.INTERACTION_SERVICE,
+    transport: Transport.GRPC,
+    options: {
+      url: process.env.INTERACTION_URL,
+      package: INTERACTION_PACKAGE_NAME,
+      protoPath: [
+        join(__dirname, '../interaction/comment.proto'),
+        join(__dirname, '../interaction/like.proto'),
+      ],
+    },
+  }
 ]);
 
 @Module({

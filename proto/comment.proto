@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package interaction;
+
+service CommentService {
+  rpc create(CommentDto) returns (Comment) {}
+  rpc delete(CommentId) returns (Comment) {}
+  rpc find(CommentParams) returns (Comments) {}
+  rpc findOne(CommentWhereUnique) returns (Comment) {}
+  rpc update(CommentUpdateDto) returns (Comment) {}
+}
+
+service ReplyService {
+  rpc create(ReplyDto) returns (Reply) {}
+  rpc delete(ReplyId) returns (Reply) {}
+  rpc find(ReplyParams) returns (Replies) {}
+  rpc findOne(ReplyWhereUnique) returns (Reply) {}
+  rpc update(ReplyUpdateDto) returns (Reply) {}
+}
+
+message CommentDto {
+  string userId = 1;
+  string postId = 2;
+  string content = 3;
+}
+
+message CommentUpdateDto {
+  string id = 1;
+  optional string userId = 2;
+  optional string postId = 3;
+  optional string content = 4;
+}
+
+message Comment {
+  string id = 1;
+  string userId = 2;
+  string postId = 3;
+  string content = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+}
+
+message CommentWhere {
+  optional string id = 1;
+  optional string userId = 2;
+  optional string postId = 3;
+  optional string content = 4;
+}
+
+message CommentWhereUnique {
+  string id = 1;
+  optional string userId = 2;
+  optional string postId = 3;
+  optional string content = 4;
+}
+
+message CommentParams {
+  optional CommentWhere where = 1;
+  optional int32 take = 2;
+  optional int32 skip = 3;
+}
+
+message CommentId {
+  string id = 1;
+}
+
+message ReplyDto {
+  string userId = 1;
+  string commentId = 2;
+  string content = 3;
+}
+
+message ReplyUpdateDto {
+  string id = 1;
+  optional string userId = 2;
+  optional string commentId = 3;
+  optional string content = 4;
+}
+
+message Reply {
+  string id = 1;
+  string userId = 2;
+  string commentId = 3;
+  string content = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+}
+
+message ReplyWhere {
+  optional string id = 1;
+  optional string userId = 2;
+  optional string commentId = 3;
+  optional string content = 4;
+}
+
+message ReplyWhereUnique {
+  string id = 1;
+  optional string userId = 2;
+  optional string commentId = 3;
+  optional string content = 4;
+}
+
+message ReplyParams {
+  optional ReplyWhere where = 1;
+  optional int32 take = 2;
+  optional int32 skip = 3;
+}
+
+message ReplyId {
+  string id = 1;
+}
+
+message Comments {
+  repeated Comment comments = 1;
+}
+
+message Replies {
+  repeated Reply replies = 1;
+}
