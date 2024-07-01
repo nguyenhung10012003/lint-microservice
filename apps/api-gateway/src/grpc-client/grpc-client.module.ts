@@ -1,4 +1,5 @@
 import { RELATIONSHIP_PACKAGE_NAME } from '@app/common/types/following';
+import { POST_PACKAGE_NAME } from '@app/common/types/media';
 import { PROFILE_PACKAGE_NAME } from '@app/common/types/profile';
 import { USER_PACKAGE_NAME } from '@app/common/types/user';
 import { Module } from '@nestjs/common';
@@ -37,6 +38,19 @@ const GrpcClients = ClientsModule.register([
       protoPath: [
         join(__dirname, '../relationship/blacklist.proto'),
         join(__dirname, '../relationship/following.proto'),
+      ],
+    },
+  },
+  {
+    name: MicroService.POST_SERVICE,
+    transport: Transport.GRPC,
+    options: {
+      url: process.env.POST_URL,
+      package: POST_PACKAGE_NAME,
+      protoPath: [
+        join(__dirname, '../post/post.proto'),
+        join(__dirname, '../post/media.proto'),
+        join(__dirname, '../post/tag.proto'),
       ],
     },
   },

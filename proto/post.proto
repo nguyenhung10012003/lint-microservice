@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package post;
+import "media.proto";
+import "tag.proto";
+
+service PostService {
+  rpc create(PostDto) returns (Post) {}
+  rpc update(PostDto) returns (Post) {}
+  rpc find(PostFindParams) returns (Posts) {}
+  rpc findOne(PostWhereUnique) returns (Post) {}
+  rpc delete(PostWhereUnique) returns (Post) {}
+}
+
+message PostDto {
+  string userId = 1;
+  optional string content = 2;
+  optional int32 views = 3;
+  optional int32 share = 4;
+  repeated MediaDto medias = 5;
+  repeated TagDto tags = 6;
+  optional string sourceId = 7;
+  optional PostScope scope = 8;
+}
+
+message Post {
+  string id = 1;
+  string userId = 2;
+  optional string content = 3;
+  int32 views = 4;
+  int32 share = 5;
+  repeated Media medias = 6;
+  repeated Tag tags = 7;
+  optional string sourceId = 8;
+  optional PostScope scope = 9;
+  optional Post sourcePost = 10;
+  string createdAt = 11;
+  string updatedAt = 12;
+}
+
+message Posts {
+  repeated Post posts = 1;
+}
+
+message PostWhere {
+  optional string id = 1;
+  optional string userId = 2;
+}
+
+message PostWhereUnique {
+  string id = 1;
+  optional string userId = 2;
+}
+
+message PostFindParams {
+  optional PostWhere where = 1;
+  optional int32 skip = 2;
+  optional int32 take = 3;
+  optional string orderBy = 4;
+  optional PostSelect select = 5;
+}
+
+message PostSelect {
+  optional bool id = 1;
+  optional bool userId = 2;
+  optional bool content = 3;
+  optional bool views = 4;
+  optional bool share = 5;
+  optional bool medias = 6;
+  optional bool tags = 7;
+  optional bool sourceId = 8;
+  optional bool scope = 9;
+  optional bool sourcePost = 10;
+  optional bool createdAt = 11;
+  optional bool updatedAt = 12;
+}
+
+enum PostScope {
+  PUBLIC = 0;
+  PRIVATE = 1; 
+}

@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/prisma-post-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("POST_DB_URL")
+}
+
+model Post {
+  id         String    @id @default(cuid())
+  userId     String
+  content    String?
+  views      Int       @default(0)
+  share      Int       @default(0)
+  scope      PostScope @default(PUBLIC)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  medias     Media[]
+  tags       Tag[]
+  source     String?
+  sourcePost Post?     @relation("SharedPost", fields: [source], references: [id])
+  sharedPost Post[]    @relation("SharedPost")
+  postId     String?
+}
+
+model Media {
+  id       Int       @id @default(autoincrement())
+  postId   String
+  url      String
+  type     MediaType
+  width    Int?
+  height   Int?
+  duration Int?
+  post     Post      @relation(fields: [postId], references: [id])
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  posts     Post[]
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+enum PostScope {
+  PUBLIC
+  PRIVATE
+}

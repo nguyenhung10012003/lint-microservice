@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { FollowingModule } from './following/following.module';
+import { PostModule } from './post/post.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 
@@ -18,6 +19,7 @@ import { UserModule } from './user/user.module';
     CommonModule,
     FollowingModule,
     BlacklistModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [

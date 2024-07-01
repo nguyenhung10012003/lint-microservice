@@ -5,10 +5,10 @@
 // source: following.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
-export const protobufPackage = "relationship";
+export const protobufPackage = 'relationship';
 
 export interface FollowDto {
   followerId: string;
@@ -33,17 +33,17 @@ export interface FollowWhereUnique {
   id: string;
   followerId?: string | undefined;
   followingId?: string | undefined;
-  and: FollowWhere[];
+  and?: FollowWhere[];
 }
 
 export interface FollowWhere {
   id?: string | undefined;
   followerId?: string | undefined;
   followingId?: string | undefined;
-  and: FollowWhere[];
+  and?: FollowWhere[];
 }
 
-export const RELATIONSHIP_PACKAGE_NAME = "relationship";
+export const RELATIONSHIP_PACKAGE_NAME = 'relationship';
 
 export interface FollowingServiceClient {
   create(request: FollowDto): Observable<Follow>;
@@ -58,7 +58,9 @@ export interface FollowingServiceClient {
 export interface FollowingServiceController {
   create(request: FollowDto): Promise<Follow> | Observable<Follow> | Follow;
 
-  delete(request: FollowWhereUnique): Promise<Follow> | Observable<Follow> | Follow;
+  delete(
+    request: FollowWhereUnique,
+  ): Promise<Follow> | Observable<Follow> | Follow;
 
   find(request: FollowWhere): Promise<Follows> | Observable<Follows> | Follows;
 
@@ -67,17 +69,31 @@ export interface FollowingServiceController {
 
 export function FollowingServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "delete", "find", "count"];
+    const grpcMethods: string[] = ['create', 'delete', 'find', 'count'];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("FollowingService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcMethod('FollowingService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("FollowingService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcStreamMethod('FollowingService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
   };
 }
 
-export const FOLLOWING_SERVICE_NAME = "FollowingService";
+export const FOLLOWING_SERVICE_NAME = 'FollowingService';

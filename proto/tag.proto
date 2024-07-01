@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package post;
+
+service TagService {
+  rpc create(TagDto) returns (Tag) {}
+  rpc update(TagDto) returns (Tag) {}
+  rpc find(TagFindParams) returns (Tags) {}
+  rpc findOne(TagWhereUnique) returns (Tag) {}
+  rpc delete(TagWhereUnique) returns (Tag) {}
+}
+
+message TagDto {
+  string name = 1;
+}
+
+message Tag {
+  int32 id = 1;
+  string name = 2;
+  string createdAt = 3;
+}
+
+message Tags {
+  repeated Tag tags = 1;
+}
+
+message TagWhere {
+  optional int32 id = 1;
+  optional string name = 2;
+}
+
+message TagWhereUnique {
+  optional int32 id = 1;
+}
+
+message TagFindParams {
+  optional TagWhere where = 1;
+  optional int32 skip = 2;
+  optional int32 take = 3;
+  optional string orderBy = 4;
+  optional TagSelect select = 5;
+}
+
+message TagSelect {
+  optional bool id = 1;
+  optional bool name = 2;
+  optional bool createdAt = 3;
+}
