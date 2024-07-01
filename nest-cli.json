@@ -74,6 +74,20 @@
         ],
         "watchAssets": true
       }
+    },
+    "post": {
+      "type": "application",
+      "root": "apps/post",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/post/tsconfig.app.json",
+        "assets": [
+          "certificate/*.pem",
+          "proto/*.proto"
+        ],
+        "watchAssets": true
+      }
     }
   }
 }

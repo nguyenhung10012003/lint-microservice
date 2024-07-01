@@ -10,11 +10,8 @@ import {
 } from '@nestjs/common';
 import { GrpcToHttpInterceptor } from 'nestjs-grpc-exceptions';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
-import { UserSelectQuery, extractUserSelect } from '../types/select.query';
-import { SkipQuery } from '../types/skip.query';
-import { UserSortQuery } from '../types/sort.query';
-import { TakeQuery } from '../types/take.query';
-import { UserWhereQuery } from '../types/where.query';
+import { ManyQuery } from '../types/query';
+import { UserQuery } from './model/user.query';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -25,17 +22,10 @@ export class UserController {
   @Get()
   findAll(
     @Query()
-    query: SkipQuery &
-      TakeQuery &
-      UserSelectQuery &
-      UserWhereQuery &
-      UserSortQuery,
+    query: ManyQuery,
   ) {
-    return this.userService.findAll({
-      skip: query.skip,
-      take: query.take,
-      select: extractUserSelect(query),
-    });
+    const userQuery = new UserQuery(query.select, query.skip, query.take);
+    return this.userService.findAll(userQuery.extract());
   }
 
   @Get(':id')

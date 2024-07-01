@@ -23,8 +23,8 @@ export class ProfileService implements OnModuleInit {
     return this.profilServiceClient.findAll({});
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} profile`;
+  async findOne(id: string) {
+    return this.profilServiceClient.findById({ id });
   }
 
   async update(id: string, updateProfileDto: ProfileDto) {

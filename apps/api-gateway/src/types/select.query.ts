@@ -1,13 +1,11 @@
-export interface SelectQuery {
-  select?: string[];
-}
+import { SelectQuery, SkipQuery, TakeQuery } from './query';
 
-export interface UserSelectQuery extends SelectQuery {
-  select?: ['id', 'email', 'createdAt', 'updatedAt'];
-  profileSelect?: ProfileSelectQuery | boolean;
-}
-
-export interface ProfileSelectQuery extends SelectQuery {
+export class ProfileSelectQuery
+  extends SelectQuery
+  implements TakeQuery, SkipQuery
+{
+  skip?: number;
+  take?: number;
   select?: [
     'id',
     'dob',
@@ -18,28 +16,9 @@ export interface ProfileSelectQuery extends SelectQuery {
     'country',
     'gender',
   ];
+  constructor(select?: string[], skip?: number, take?: number) {
+    super(select);
+    this.skip = skip;
+    this.take = take;
+  }
 }
-
-export const extractSelectString = (select?: string[]) => {
-  if (!select) return undefined;
-
-  return select.reduce((obj, curr) => {
-    obj[curr] = true;
-    return obj;
-  }, {});
-};
-
-export const extractUserSelect = (userSelect: UserSelectQuery) => {
-  if (!userSelect.profileSelect) return extractSelectString(userSelect.select);
-  return {
-    ...extractSelectString(userSelect.select),
-    profile:
-      userSelect.profileSelect === true
-        ? true
-        : extractProfileSelect(userSelect.profileSelect),
-  };
-};
-
-export const extractProfileSelect = (profileSelect: ProfileSelectQuery) => {
-  return extractSelectString(profileSelect.select);
-};
