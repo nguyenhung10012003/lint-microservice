@@ -1,27 +1,34 @@
+import { ErrorInterceptor } from '@app/common/interceptors/error.interceptor';
+import { Count } from '@app/common/types/count';
 import {
   Like,
   LikeDto,
-  LikeId,
   LikeParams,
   LikeServiceController,
   LikeServiceControllerMethods,
+  LikeWhere,
+  LikeWhereUnique,
   Likes,
 } from '@app/common/types/like';
-import { Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { LikeService } from './like.service';
 
 @Controller()
 @LikeServiceControllerMethods()
+@UseInterceptors(ErrorInterceptor)
 export class LikeController implements LikeServiceController {
   constructor(private readonly likeService: LikeService) {}
   create(request: LikeDto): Like | Promise<Like> | Observable<Like> {
-    throw new Error('Method not implemented.');
+    return this.likeService.create(request);
   }
-  delete(request: LikeId): Like | Promise<Like> | Observable<Like> {
-    throw new Error('Method not implemented.');
+  delete(request: LikeWhereUnique): Like | Promise<Like> | Observable<Like> {
+    return this.likeService.delete(request);
   }
   find(request: LikeParams): Likes | Promise<Likes> | Observable<Likes> {
-    throw new Error('Method not implemented.');
+    return this.likeService.find(request);
+  }
+  count(request: LikeWhere): Count | Promise<Count> | Observable<Count> {
+    return this.likeService.count(request);
   }
 }

@@ -1,11 +1,13 @@
 syntax = "proto3";
 
 package interaction;
+import "count.proto";
 
 service LikeService {
   rpc create(LikeDto) returns (Like) {}
-  rpc delete(LikeId) returns (Like) {}
+  rpc delete(LikeWhereUnique) returns (Like) {}
   rpc find(LikeParams) returns (Likes) {}
+  rpc count(LikeWhere) returns (Count) {}
 }
 
 message LikeDto {
@@ -22,6 +24,12 @@ message Like {
 
 message LikeWhere {
   optional string id = 1;
+  optional string userId = 2;
+  optional string postId = 3;
+}
+
+message LikeWhereUnique {
+  string id = 1;
   optional string userId = 2;
   optional string postId = 3;
 }

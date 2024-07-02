@@ -7,9 +7,11 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
 import { FollowingModule } from './following/following.module';
+import { LikeModule } from './like/like.module';
 import { PostModule } from './post/post.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { UserModule } from './user/user.module';
     FollowingModule,
     BlacklistModule,
     PostModule,
+    LikeModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [

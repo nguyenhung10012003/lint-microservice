@@ -52,7 +52,6 @@ export class PostService {
     include?: Prisma.PostInclude;
     select?: Prisma.PostSelect;
   }) {
-    console.log(params);
     const posts = await this.prisma.post.findMany(params);
     return {
       posts: posts.map((post) => {

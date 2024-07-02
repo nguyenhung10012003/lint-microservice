@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package relationship;
+import "count.proto";
 
 service FollowingService {
   rpc create(FollowDto) returns (Follow) {}
@@ -22,10 +23,6 @@ message Follow {
 
 message Follows {
   repeated Follow follows = 1;
-}
-
-message Count {
-  int32 count = 1;
 }
 
 message FollowWhereUnique {

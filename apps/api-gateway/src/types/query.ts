@@ -1,9 +1,26 @@
 import { TransformToArray } from '../lib/decorators/transform.decorator';
 
-export interface ManyQuery {
+export interface SkipQuery {
   skip?: number;
+}
+
+export interface TakeQuery {
   take?: number;
+}
+
+export interface ManyQuery extends SkipQuery, TakeQuery {
   select?: string[];
+  [key: string]:
+    | number
+    | string
+    | boolean
+    | number[]
+    | string[]
+    | boolean[]
+    | undefined;
+}
+
+export interface CountQuery {
   [key: string]:
     | number
     | string
@@ -17,14 +34,6 @@ export interface ManyQuery {
 export interface ISelectQuery {
   select?: string[];
   extractSelect(): any;
-}
-
-export interface SkipQuery {
-  skip?: number;
-}
-
-export interface TakeQuery {
-  take?: number;
 }
 
 export class SelectQuery implements ISelectQuery {

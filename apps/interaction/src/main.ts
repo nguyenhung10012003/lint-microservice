@@ -10,6 +10,7 @@ async function bootstrap() {
     {
       transport: Transport.GRPC,
       options: {
+        url: process.env.INTERACTION_URL,
         package: INTERACTION_PACKAGE_NAME,
         protoPath: [
           join(__dirname, '../like.proto'),

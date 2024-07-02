@@ -5,10 +5,11 @@
 // source: comment.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
+import { Count } from './count';
 
-export const protobufPackage = "interaction";
+export const protobufPackage = 'interaction';
 
 export interface CommentDto {
   userId: string;
@@ -30,6 +31,7 @@ export interface Comment {
   content: string;
   createdAt: string;
   updatedAt: string;
+  replies?: Reply[];
 }
 
 export interface CommentWhere {
@@ -46,10 +48,21 @@ export interface CommentWhereUnique {
   content?: string | undefined;
 }
 
+export interface CommentSelect {
+  id?: boolean | undefined;
+  userId?: boolean | undefined;
+  postId?: boolean | undefined;
+  content?: boolean | undefined;
+  createdAt?: boolean | undefined;
+  updatedAt?: boolean | undefined;
+  replies?: boolean | undefined;
+}
+
 export interface CommentParams {
   where?: CommentWhere | undefined;
   take?: number | undefined;
   skip?: number | undefined;
+  select?: CommentSelect | undefined;
 }
 
 export interface CommentId {
@@ -92,10 +105,18 @@ export interface ReplyWhereUnique {
   content?: string | undefined;
 }
 
+export interface ReplySelect {
+  id?: boolean | undefined;
+  userId?: boolean | undefined;
+  commentId?: boolean | undefined;
+  content?: boolean | undefined;
+}
+
 export interface ReplyParams {
   where?: ReplyWhere | undefined;
   take?: number | undefined;
   skip?: number | undefined;
+  select?: ReplySelect | undefined;
 }
 
 export interface ReplyId {
@@ -110,7 +131,7 @@ export interface Replies {
   replies: Reply[];
 }
 
-export const INTERACTION_PACKAGE_NAME = "interaction";
+export const INTERACTION_PACKAGE_NAME = 'interaction';
 
 export interface CommentServiceClient {
   create(request: CommentDto): Observable<Comment>;
@@ -122,6 +143,8 @@ export interface CommentServiceClient {
   findOne(request: CommentWhereUnique): Observable<Comment>;
 
   update(request: CommentUpdateDto): Observable<Comment>;
+
+  count(request: CommentWhere): Observable<Count>;
 }
 
 export interface CommentServiceController {
@@ -129,34 +152,63 @@ export interface CommentServiceController {
 
   delete(request: CommentId): Promise<Comment> | Observable<Comment> | Comment;
 
-  find(request: CommentParams): Promise<Comments> | Observable<Comments> | Comments;
+  find(
+    request: CommentParams,
+  ): Promise<Comments> | Observable<Comments> | Comments;
 
-  findOne(request: CommentWhereUnique): Promise<Comment> | Observable<Comment> | Comment;
+  findOne(
+    request: CommentWhereUnique,
+  ): Promise<Comment> | Observable<Comment> | Comment;
 
-  update(request: CommentUpdateDto): Promise<Comment> | Observable<Comment> | Comment;
+  update(
+    request: CommentUpdateDto,
+  ): Promise<Comment> | Observable<Comment> | Comment;
+
+  count(request: CommentWhere): Promise<Count> | Observable<Count> | Count;
 }
 
 export function CommentServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "delete", "find", "findOne", "update"];
+    const grpcMethods: string[] = [
+      'create',
+      'delete',
+      'find',
+      'findOne',
+      'update',
+      'count',
+    ];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("CommentService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcMethod('CommentService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("CommentService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcStreamMethod('CommentService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
   };
 }
 
-export const COMMENT_SERVICE_NAME = "CommentService";
+export const COMMENT_SERVICE_NAME = 'CommentService';
 
 export interface ReplyServiceClient {
   create(request: ReplyDto): Observable<Reply>;
 
-  delete(request: ReplyId): Observable<Reply>;
+  delete(request: ReplyWhereUnique): Observable<Reply>;
 
   find(request: ReplyParams): Observable<Replies>;
 
@@ -168,28 +220,50 @@ export interface ReplyServiceClient {
 export interface ReplyServiceController {
   create(request: ReplyDto): Promise<Reply> | Observable<Reply> | Reply;
 
-  delete(request: ReplyId): Promise<Reply> | Observable<Reply> | Reply;
+  delete(request: ReplyWhereUnique): Promise<Reply> | Observable<Reply> | Reply;
 
   find(request: ReplyParams): Promise<Replies> | Observable<Replies> | Replies;
 
-  findOne(request: ReplyWhereUnique): Promise<Reply> | Observable<Reply> | Reply;
+  findOne(
+    request: ReplyWhereUnique,
+  ): Promise<Reply> | Observable<Reply> | Reply;
 
   update(request: ReplyUpdateDto): Promise<Reply> | Observable<Reply> | Reply;
 }
 
 export function ReplyServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "delete", "find", "findOne", "update"];
+    const grpcMethods: string[] = [
+      'create',
+      'delete',
+      'find',
+      'findOne',
+      'update',
+    ];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("ReplyService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcMethod('ReplyService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("ReplyService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcStreamMethod('ReplyService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
   };
 }
 
-export const REPLY_SERVICE_NAME = "ReplyService";
+export const REPLY_SERVICE_NAME = 'ReplyService';

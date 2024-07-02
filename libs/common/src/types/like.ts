@@ -7,6 +7,7 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Count } from "./count";
 
 export const protobufPackage = "interaction";
 
@@ -24,6 +25,12 @@ export interface Like {
 
 export interface LikeWhere {
   id?: string | undefined;
+  userId?: string | undefined;
+  postId?: string | undefined;
+}
+
+export interface LikeWhereUnique {
+  id: string;
   userId?: string | undefined;
   postId?: string | undefined;
 }
@@ -47,22 +54,26 @@ export const INTERACTION_PACKAGE_NAME = "interaction";
 export interface LikeServiceClient {
   create(request: LikeDto): Observable<Like>;
 
-  delete(request: LikeId): Observable<Like>;
+  delete(request: LikeWhereUnique): Observable<Like>;
 
   find(request: LikeParams): Observable<Likes>;
+
+  count(request: LikeWhere): Observable<Count>;
 }
 
 export interface LikeServiceController {
   create(request: LikeDto): Promise<Like> | Observable<Like> | Like;
 
-  delete(request: LikeId): Promise<Like> | Observable<Like> | Like;
+  delete(request: LikeWhereUnique): Promise<Like> | Observable<Like> | Like;
 
   find(request: LikeParams): Promise<Likes> | Observable<Likes> | Likes;
+
+  count(request: LikeWhere): Promise<Count> | Observable<Count> | Count;
 }
 
 export function LikeServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "delete", "find"];
+    const grpcMethods: string[] = ["create", "delete", "find", "count"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("LikeService", method)(constructor.prototype[method], method, descriptor);

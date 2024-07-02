@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package interaction;
+import "count.proto";
 
 service CommentService {
   rpc create(CommentDto) returns (Comment) {}
@@ -8,11 +9,12 @@ service CommentService {
   rpc find(CommentParams) returns (Comments) {}
   rpc findOne(CommentWhereUnique) returns (Comment) {}
   rpc update(CommentUpdateDto) returns (Comment) {}
+  rpc count(CommentWhere) returns (Count) {}
 }
 
 service ReplyService {
   rpc create(ReplyDto) returns (Reply) {}
-  rpc delete(ReplyId) returns (Reply) {}
+  rpc delete(ReplyWhereUnique) returns (Reply) {}
   rpc find(ReplyParams) returns (Replies) {}
   rpc findOne(ReplyWhereUnique) returns (Reply) {}
   rpc update(ReplyUpdateDto) returns (Reply) {}
@@ -38,6 +40,7 @@ message Comment {
   string content = 4;
   string createdAt = 5;
   string updatedAt = 6;
+  repeated Reply replies = 7;
 }
 
 message CommentWhere {
@@ -54,10 +57,21 @@ message CommentWhereUnique {
   optional string content = 4;
 }
 
+message CommentSelect {
+  optional bool id = 1;
+  optional bool userId = 2;
+  optional bool postId = 3;
+  optional bool content = 4;
+  optional bool createdAt = 5;
+  optional bool updatedAt = 6;
+  optional bool replies = 7;
+}
+
 message CommentParams {
   optional CommentWhere where = 1;
   optional int32 take = 2;
   optional int32 skip = 3;
+  optional CommentSelect select = 4;
 }
 
 message CommentId {
@@ -100,10 +114,18 @@ message ReplyWhereUnique {
   optional string content = 4;
 }
 
+message ReplySelect {
+  optional bool id = 1;
+  optional bool userId = 2;
+  optional bool commentId = 3;
+  optional bool content = 4;
+}
+
 message ReplyParams {
   optional ReplyWhere where = 1;
   optional int32 take = 2;
   optional int32 skip = 3;
+  optional ReplySelect select = 4;
 }
 
 message ReplyId {
