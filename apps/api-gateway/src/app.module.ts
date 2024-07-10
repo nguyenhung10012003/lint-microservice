@@ -12,6 +12,7 @@ import { PostModule } from './post/post.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CommentModule } from './comment/comment.module';
     PostModule,
     LikeModule,
     CommentModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

@@ -9,20 +9,49 @@ import {
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { MicroService } from '../grpc-client/microservice';
+import {
+  NOTIFICATION_SERVICE_NAME,
+  NotificationServiceClient,
+} from '@app/common/types/notification';
+import { POST_SERVICE_NAME, PostServiceClient } from '@app/common/types/post';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class LikeService implements OnModuleInit {
   private likeClient: LikeServiceClient;
+  private notificationService: NotificationServiceClient;
+  private postService: PostServiceClient;
   constructor(
     @Inject(MicroService.INTERACTION_SERVICE)
     private readonly client: ClientGrpc,
+    @Inject(MicroService.NOTIFICATION_SERVICE)
+    private readonly notificationClient: ClientGrpc,
+    @Inject(MicroService.POST_SERVICE)
+    private readonly postClient: ClientGrpc,
   ) {}
   onModuleInit() {
     this.likeClient =
       this.client.getService<LikeServiceClient>(LIKE_SERVICE_NAME);
+    this.notificationService =
+      this.notificationClient.getService<NotificationServiceClient>(
+        NOTIFICATION_SERVICE_NAME,
+      );
+    this.postService =
+      this.postClient.getService<PostServiceClient>(POST_SERVICE_NAME);
   }
 
   async create(like: LikeDto) {
+    const post = await firstValueFrom(
+      this.postService.findOne({ id: like.postId }),
+    );
+    const postOwnerId = post.userId;
+    const notification = {
+      interactorId: like.userId,
+      postId: like.postId,
+      userId: postOwnerId,
+      content: 'new like',
+    };
+    await firstValueFrom(this.notificationService.create(notification));
     return this.likeClient.create(like);
   }
 
