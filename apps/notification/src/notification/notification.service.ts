@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateNotificationDto,
@@ -9,6 +9,7 @@ import {
   NotificationWhereUnique,
 } from '@app/common/types/notification';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { GrpcNotFoundException } from 'nestjs-grpc-exceptions';
 
 @Injectable()
 export class NotificationService {
@@ -51,7 +52,15 @@ export class NotificationService {
   }
 
   async update(updateDto: UpdateNotificationDto): Promise<Notification> {
-    const notification = await this.prismaService.notification.update({
+    let notification = await this.prismaService.notification.findUnique({
+      where: {
+        id: updateDto.id,
+      },
+    });
+    if (!notification) {
+      throw new GrpcNotFoundException('Notification not found');
+    }
+    notification = await this.prismaService.notification.update({
       where: {
         id: updateDto.id,
       },
@@ -59,10 +68,6 @@ export class NotificationService {
         read: updateDto.read,
       },
     });
-
-    if (!notification) {
-      throw new BadRequestException('Notification not found');
-    }
 
     return {
       ...notification,
@@ -76,10 +81,25 @@ export class NotificationService {
       where: { id: where.id },
     });
     if (!isNotificationExist) {
-      throw new BadRequestException('Notification not found');
+      throw new GrpcNotFoundException('Notification not found');
     }
 
     await this.prismaService.notification.delete({ where });
     return;
+  }
+
+  async findOne(where: NotificationWhereUnique): Promise<Notification> {
+    const notification = await this.prismaService.notification.findUnique({
+      where,
+    });
+    if (!notification) {
+      throw new GrpcNotFoundException('Notification not found');
+    }
+
+    return {
+      ...notification,
+      createdAt: notification.createdAt?.toISOString(),
+      updatedAt: notification.updatedAt?.toISOString(),
+    };
   }
 }

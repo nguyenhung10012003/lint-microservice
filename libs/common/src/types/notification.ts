@@ -27,6 +27,7 @@ export interface Notification {
   postId?: string | undefined;
   interactorId: string;
   userId: string;
+  content: string;
   read: boolean;
   createdAt: string;
   updatedAt: string;
@@ -64,6 +65,8 @@ export interface NotificationServiceClient {
   findMany(request: NotificationFindParams): Observable<Notifications>;
 
   delete(request: NotificationWhereUnique): Observable<Empty>;
+
+  findOne(request: NotificationWhereUnique): Observable<Notification>;
 }
 
 export interface NotificationServiceController {
@@ -74,11 +77,13 @@ export interface NotificationServiceController {
   findMany(request: NotificationFindParams): Promise<Notifications> | Observable<Notifications> | Notifications;
 
   delete(request: NotificationWhereUnique): Promise<Empty> | Observable<Empty> | Empty;
+
+  findOne(request: NotificationWhereUnique): Promise<Notification> | Observable<Notification> | Notification;
 }
 
 export function NotificationServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "update", "findMany", "delete"];
+    const grpcMethods: string[] = ["create", "update", "findMany", "delete", "findOne"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("NotificationService", method)(constructor.prototype[method], method, descriptor);

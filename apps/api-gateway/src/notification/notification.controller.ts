@@ -7,12 +7,12 @@ import {
   Get,
   Request,
   Delete,
-  Param,
   Post,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import {
   CreateNotificationDto,
+  NotificationWhereUnique,
   UpdateNotificationDto,
 } from '@app/common/types/notification';
 import { ManyQuery } from '../types/query';
@@ -42,12 +42,14 @@ export class NotificationController {
   }
 
   @Patch()
-  async update(@Body() updateDto: UpdateNotificationDto) {
-    return await this.notificationService.update(updateDto);
+  async update(@Request() request, @Body() updateDto: UpdateNotificationDto) {
+    const userId = request.user.userId;
+    return await this.notificationService.update(updateDto, userId);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    await this.notificationService.delete({ id: id });
+  @Delete()
+  async delete(@Request() request, @Body() where: NotificationWhereUnique) {
+    const userId = request.user.userId;
+    await this.notificationService.delete(where, userId);
   }
 }

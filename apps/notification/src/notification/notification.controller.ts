@@ -41,4 +41,8 @@ export class NotificationController implements NotificationServiceController {
   ): Promise<Empty> | Observable<Empty> | Empty {
     return this.notificationService.delete(request);
   }
+
+  findOne(request: NotificationWhereUnique): Promise<Notification> {
+    return this.notificationService.findOne(request);
+  }
 }
