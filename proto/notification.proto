@@ -7,6 +7,7 @@ service NotificationService {
   rpc update(UpdateNotificationDto) returns (Notification) {}
   rpc findMany(NotificationFindParams) returns (Notifications) {}
   rpc delete(NotificationWhereUnique) returns (Empty) {}
+  rpc findOne(NotificationWhereUnique) returns (Notification) {}
 }
 
 message CreateNotificationDto {
@@ -26,9 +27,10 @@ message Notification {
   optional string postId = 2;
   string interactorId = 3;
   string userId = 4;
-  bool read = 5;
-  string createdAt = 6;
-  string updatedAt = 7;
+  string content = 5;
+  bool read = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
 }
 
 message Notifications {
