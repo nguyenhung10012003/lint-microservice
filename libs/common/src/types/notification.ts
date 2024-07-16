@@ -19,27 +19,33 @@ export enum NotificationType {
 }
 
 export interface UpsertNotificationDto {
-  postId?: string | undefined;
-  interactorId: string;
+  type: NotificationType;
+  post?: Obj | undefined;
+  subject: Obj | undefined;
   userId: string;
-  content: string;
 }
 
-export interface UpdateNotificationDto {
+export interface UpdateStatusDto {
   id: string;
-  read: boolean;
 }
 
 export interface Notification {
   id: string;
   type: NotificationType;
-  postId?: string | undefined;
-  interactorId: string[];
+  post?: Obj | undefined;
+  subjects: Obj[];
+  subjectCount: number;
   userId: string;
   content: string;
   read: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Obj {
+  id: string;
+  name?: string | undefined;
+  imageUrl?: string | undefined;
 }
 
 export interface Notifications {
@@ -69,7 +75,7 @@ export const NOTIFICATION_PACKAGE_NAME = "notification";
 export interface NotificationServiceClient {
   upsert(request: UpsertNotificationDto): Observable<Notification>;
 
-  update(request: UpdateNotificationDto): Observable<Notification>;
+  updateStatus(request: UpdateStatusDto): Observable<Notification>;
 
   findMany(request: NotificationFindParams): Observable<Notifications>;
 
@@ -81,7 +87,7 @@ export interface NotificationServiceClient {
 export interface NotificationServiceController {
   upsert(request: UpsertNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
 
-  update(request: UpdateNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
+  updateStatus(request: UpdateStatusDto): Promise<Notification> | Observable<Notification> | Notification;
 
   findMany(request: NotificationFindParams): Promise<Notifications> | Observable<Notifications> | Notifications;
 
@@ -92,7 +98,7 @@ export interface NotificationServiceController {
 
 export function NotificationServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["upsert", "update", "findMany", "delete", "findOne"];
+    const grpcMethods: string[] = ["upsert", "updateStatus", "findMany", "delete", "findOne"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("NotificationService", method)(constructor.prototype[method], method, descriptor);

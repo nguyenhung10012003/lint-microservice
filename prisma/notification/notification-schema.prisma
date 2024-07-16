@@ -12,9 +12,9 @@ model Notification {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   type          String
   postId        String?
-  post          Obj
-  content       String?
-  subject       Obj[]
+  post          Json?
+  content       String
+  subject       Json[]
   subjectCount  Int
   userId        String
   read          Boolean
@@ -24,9 +24,3 @@ model Notification {
   @@unique([type, postId, userId])
 }
 
-model Obj {
-  id            String
-  name          String
-  type          String 
-  imageUrl      String?
-}

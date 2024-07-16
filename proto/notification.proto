@@ -4,34 +4,40 @@ package notification;
 
 service NotificationService {
   rpc upsert(UpsertNotificationDto) returns (Notification) {}
-  rpc update(UpdateNotificationDto) returns (Notification) {}
+  rpc updateStatus(UpdateStatusDto) returns (Notification) {}
   rpc findMany(NotificationFindParams) returns (Notifications) {}
   rpc delete(NotificationWhereUnique) returns (Empty) {}
   rpc findOne(NotificationWhereUnique) returns (Notification) {}
 }
 
 message UpsertNotificationDto {
-  optional string postId = 1;
-  string interactorId = 2;
-  string userId = 3;
-  string content = 4;
+  NotificationType type = 1;
+  optional Obj post = 2;
+  Obj subject = 3;
+  string userId = 4;
 }
 
-message UpdateNotificationDto {
+message UpdateStatusDto {
   string id = 1;
-  bool read = 2;
 }
 
 message Notification {
   string id = 1;
   NotificationType type = 2;
-  optional string postId = 3;
-  repeated string interactorId = 4;
-  string userId = 5;
-  string content = 6;
-  bool read = 7;
-  string createdAt = 8;
-  string updatedAt = 9;
+  optional Obj post = 3; 
+  repeated Obj subjects = 4;
+  int32 subjectCount = 5;
+  string userId = 6;
+  string content = 7;
+  bool read = 8;
+  string createdAt = 9;
+  string updatedAt = 10;
+}
+
+message Obj {
+  string id =  1;
+  optional string name = 2;
+  optional string imageUrl = 4;
 }
 
 message Notifications {

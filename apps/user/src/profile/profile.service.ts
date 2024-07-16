@@ -27,11 +27,16 @@ export class ProfileService {
     };
   }
 
-  async findOne(params: {
-    where: Prisma.ProfileWhereUniqueInput;
-    select?: Prisma.ProfileSelect;
-  }) {
-    return this.prismaService.profile.findUnique(params);
+  async findOne(userId: string) {
+    const profile = await this.prismaService.profile.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    return {
+      ...profile,
+      dob: profile.dob?.getTime(),
+    };
   }
 
   async findById(id: string) {

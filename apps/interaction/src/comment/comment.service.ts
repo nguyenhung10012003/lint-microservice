@@ -12,24 +12,25 @@ export class CommentService {
   ) {}
 
   async create(comment: CommentDto) {
-    const newComment = await this.prismaService.comment.create({
-      data: comment,
-    });
+    // const newComment = await this.prismaService.comment.create({
+    //   data: comment,
+    // });
 
     await this.producerService.produce({
       topic: 'notification',
       messages: [
         {
-          value: 'test',
+          key: 'comment',
+          value: JSON.stringify(comment),
         },
       ],
     });
 
-    return {
-      ...newComment,
-      createdAt: newComment.createdAt?.toISOString(),
-      updatedAt: newComment.updatedAt?.toISOString(),
-    };
+    // return {
+    //   ...newComment,
+    //   createdAt: newComment.createdAt?.toISOString(),
+    //   updatedAt: newComment.updatedAt?.toISOString(),
+    // };
   }
 
   async delete(where: Prisma.CommentWhereUniqueInput) {

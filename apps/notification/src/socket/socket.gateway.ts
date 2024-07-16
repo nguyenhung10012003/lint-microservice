@@ -51,10 +51,18 @@ export class SocketGateway
     console.log(`Client ${client.id} disconnected`);
   }
 
-  @OnEvent('send-notification')
-  handleOrderCreatedEvent(notification: Notification) {
+  @OnEvent('notification.created')
+  handleCreatedEvent(notification: Notification) {
     this.server.to(`user_${notification.userId}`).emit('new-notification', {
       message: 'new notification',
+      data: notification,
+    });
+  }
+
+  @OnEvent('notification.updated')
+  handleUpdatedEvent(notification: Notification) {
+    this.server.to(`user_${notification.userId}`).emit('update-notification', {
+      message: 'update notification',
       data: notification,
     });
   }

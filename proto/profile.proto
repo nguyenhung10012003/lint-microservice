@@ -6,6 +6,7 @@ import "empty.proto";
 
 service ProfileService {
   rpc findAll(Empty) returns (ProfilesMessage);
+  rpc findOne(UserId) returns (ProfileMessage);
   rpc findById(ProfileId) returns (ProfileMessage);
   rpc create(ProfileDto) returns (ProfileMessage);
   rpc update(ProfileDto) returns (ProfileMessage);
@@ -29,6 +30,10 @@ message ProfilesMessage {
 
 message ProfileId {
   string id = 1;
+}
+
+message UserId {
+  string userId = 1;
 }
 
 message ProfileDto {
