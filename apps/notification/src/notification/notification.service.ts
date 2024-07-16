@@ -1,22 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import {
-  CreateNotificationDto,
-  UpdateNotificationDto,
-  Notification,
-  NotificationFindParams,
-  Notifications,
-  NotificationWhereUnique,
-} from '@app/common/types/notification';
+import { UserServiceClient } from '@app/common/types/user';
+import { PostServiceClient } from '@app/common/types/post';
+import { MicroService } from '../grpc-client/microservice';
+import { ClientGrpc } from '@nestjs/microservices';
+import { ConsumerService } from '../kafka/consumer.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { GrpcNotFoundException } from 'nestjs-grpc-exceptions';
 
 @Injectable()
-export class NotificationService {
+export class NotificationService implements OnModuleInit {
+  private userService: UserServiceClient;
+  private postService: PostServiceClient;
+
   constructor(
-    private readonly prismaService: PrismaService,
-    private readonly eventEmitter: EventEmitter2,
+    private prismaService: PrismaService,
+    @Inject(MicroService.USER_SERVICE)
+    private readonly userClient: ClientGrpc,
+    @Inject(MicroService.POST_SERVICE)
+    private readonly postClient: ClientGrpc,
+    private readonly consumerService: ConsumerService,
+    private eventEmitter: EventEmitter2,
   ) {}
+
+  async onModuleInit() {
+    this.userService =
+      this.userClient.getService<UserServiceClient>('UserService');
+    this.postService =
+      this.postClient.getService<PostServiceClient>('PostService');
+
+    await this.consumerService.consume(
+      { topics: ['notification'] },
+      {
+        eachMessage: async ({ topic, partition, message }) => {
+          console.log({
+            value: message.value.toString(),
+          });
+        },
+      },
+    );
+  }
 
   async create(notification: CreateNotificationDto): Promise<Notification> {
     const newNotification = await this.prismaService.notification.create({

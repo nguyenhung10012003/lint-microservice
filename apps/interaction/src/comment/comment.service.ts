@@ -2,14 +2,29 @@ import { CommentDto } from '@app/common/types/comment';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/prisma-interaction-client';
 import { PrismaService } from '../prisma.service';
+import { ProducerService } from '../kafka/producer.service';
 
 @Injectable()
 export class CommentService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly producerService: ProducerService,
+  ) {}
+
   async create(comment: CommentDto) {
     const newComment = await this.prismaService.comment.create({
       data: comment,
     });
+
+    await this.producerService.produce({
+      topic: 'notification',
+      messages: [
+        {
+          value: 'test',
+        },
+      ],
+    });
+
     return {
       ...newComment,
       createdAt: newComment.createdAt?.toISOString(),

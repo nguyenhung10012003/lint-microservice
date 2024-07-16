@@ -10,7 +10,15 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "notification";
 
-export interface CreateNotificationDto {
+export enum NotificationType {
+  OTHER = 0,
+  LIKE = 1,
+  COMMENT = 2,
+  FOLLOW = 3,
+  UNRECOGNIZED = -1,
+}
+
+export interface UpsertNotificationDto {
   postId?: string | undefined;
   interactorId: string;
   userId: string;
@@ -24,8 +32,9 @@ export interface UpdateNotificationDto {
 
 export interface Notification {
   id: string;
+  type: NotificationType;
   postId?: string | undefined;
-  interactorId: string;
+  interactorId: string[];
   userId: string;
   content: string;
   read: boolean;
@@ -58,7 +67,7 @@ export interface Empty {
 export const NOTIFICATION_PACKAGE_NAME = "notification";
 
 export interface NotificationServiceClient {
-  create(request: CreateNotificationDto): Observable<Notification>;
+  upsert(request: UpsertNotificationDto): Observable<Notification>;
 
   update(request: UpdateNotificationDto): Observable<Notification>;
 
@@ -70,7 +79,7 @@ export interface NotificationServiceClient {
 }
 
 export interface NotificationServiceController {
-  create(request: CreateNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
+  upsert(request: UpsertNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
 
   update(request: UpdateNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
 
@@ -83,7 +92,7 @@ export interface NotificationServiceController {
 
 export function NotificationServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "update", "findMany", "delete", "findOne"];
+    const grpcMethods: string[] = ["upsert", "update", "findMany", "delete", "findOne"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("NotificationService", method)(constructor.prototype[method], method, descriptor);

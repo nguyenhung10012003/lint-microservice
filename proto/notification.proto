@@ -3,14 +3,14 @@ syntax = "proto3";
 package notification;
 
 service NotificationService {
-  rpc create(CreateNotificationDto) returns (Notification) {}
+  rpc upsert(UpsertNotificationDto) returns (Notification) {}
   rpc update(UpdateNotificationDto) returns (Notification) {}
   rpc findMany(NotificationFindParams) returns (Notifications) {}
   rpc delete(NotificationWhereUnique) returns (Empty) {}
   rpc findOne(NotificationWhereUnique) returns (Notification) {}
 }
 
-message CreateNotificationDto {
+message UpsertNotificationDto {
   optional string postId = 1;
   string interactorId = 2;
   string userId = 3;
@@ -24,13 +24,14 @@ message UpdateNotificationDto {
 
 message Notification {
   string id = 1;
-  optional string postId = 2;
-  string interactorId = 3;
-  string userId = 4;
-  string content = 5;
-  bool read = 6;
-  string createdAt = 7;
-  string updatedAt = 8;
+  NotificationType type = 2;
+  optional string postId = 3;
+  repeated string interactorId = 4;
+  string userId = 5;
+  string content = 6;
+  bool read = 7;
+  string createdAt = 8;
+  string updatedAt = 9;
 }
 
 message Notifications {
@@ -53,3 +54,10 @@ message NotificationFindParams {
 }
 
 message Empty {}
+
+enum NotificationType {
+  OTHER = 0;
+  LIKE = 1;
+  COMMENT = 2;
+  FOLLOW = 3;
+}
