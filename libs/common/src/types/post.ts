@@ -5,12 +5,13 @@
 // source: post.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
-import { Media, MediaDto } from './media';
-import { Tag, TagDto } from './tag';
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
+import { Media, MediaDto } from "./media";
+import { DateTimeFilter, SortOrder, StringFilter } from "./query";
+import { Tag, TagDto } from "./tag";
 
-export const protobufPackage = 'post';
+export const protobufPackage = "post";
 
 export enum PostScope {
   PUBLIC = 0,
@@ -49,8 +50,9 @@ export interface Posts {
 }
 
 export interface PostWhere {
-  id?: string | undefined;
-  userId?: string | undefined;
+  id?: StringFilter | undefined;
+  userId?: StringFilter | undefined;
+  createdAt?: DateTimeFilter | undefined;
 }
 
 export interface PostWhereUnique {
@@ -62,8 +64,23 @@ export interface PostFindParams {
   where?: PostWhere | undefined;
   skip?: number | undefined;
   take?: number | undefined;
-  orderBy?: string | undefined;
+  orderBy?: PostOrderBy | undefined;
   select?: PostSelect | undefined;
+}
+
+export interface PostOrderBy {
+  id?: SortOrder | undefined;
+  userId?: SortOrder | undefined;
+  content?: SortOrder | undefined;
+  views?: SortOrder | undefined;
+  share?: SortOrder | undefined;
+  medias?: SortOrder | undefined;
+  tags?: SortOrder | undefined;
+  sourceId?: SortOrder | undefined;
+  scope?: SortOrder | undefined;
+  sourcePost?: SortOrder | undefined;
+  createdAt?: SortOrder | undefined;
+  updatedAt?: SortOrder | undefined;
 }
 
 export interface PostSelect {
@@ -81,7 +98,7 @@ export interface PostSelect {
   updatedAt?: boolean | undefined;
 }
 
-export const POST_PACKAGE_NAME = 'post';
+export const POST_PACKAGE_NAME = "post";
 
 export interface PostServiceClient {
   create(request: PostDto): Observable<Post>;
@@ -109,37 +126,17 @@ export interface PostServiceController {
 
 export function PostServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = [
-      'create',
-      'update',
-      'find',
-      'findOne',
-      'delete',
-    ];
+    const grpcMethods: string[] = ["create", "update", "find", "findOne", "delete"];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcMethod('PostService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("PostService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcStreamMethod('PostService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("PostService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const POST_SERVICE_NAME = 'PostService';
+export const POST_SERVICE_NAME = "PostService";

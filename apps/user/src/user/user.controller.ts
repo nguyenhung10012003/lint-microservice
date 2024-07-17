@@ -54,7 +54,7 @@ export class UserController implements UserServiceController {
   findById(
     request: UserId,
   ): UserMessage | Promise<UserMessage> | Observable<UserMessage> {
-    throw new Error('Method not implemented.');
+    return this.userService.findById(request.id, { profile: true });
   }
 
   create(
@@ -65,7 +65,10 @@ export class UserController implements UserServiceController {
   update(
     request: UpdateUserDto,
   ): UserMessage | Observable<UserMessage> | Promise<UserMessage> {
-    throw new Error('Method not implemented.');
+    return this.userService.update({
+      data: request,
+      where: { id: request.id },
+    });
   }
   delete(
     request: UserId,

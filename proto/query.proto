@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+enum SortOrder {
+  ASC = 0;
+  DESC = 1;
+}
+
+message StringFilter {
+  optional string equals = 1;
+  repeated string in = 2;
+  repeated string notIn = 3;
+  optional string lt = 4;
+  optional string lte = 5;
+  optional string gt = 6;
+  optional string gte = 7;
+  optional string contains = 8;
+  optional string startsWith = 9;
+  optional string endsWith = 10;
+}
+
+message IntFilter {
+  optional int32 equals = 1;
+  repeated int32 in = 2;
+  repeated int32 notIn = 3;
+  optional int32 lt = 4;
+  optional int32 lte = 5;
+  optional int32 gt = 6;
+  optional int32 gte = 7;
+}
+
+message DateTimeFilter {
+  optional string equals = 1;
+  repeated string in = 2;
+  repeated string notIn = 3;
+  optional string lt = 4;
+  optional string lte = 5;
+  optional string gt = 6;
+  optional string gte = 7;
+}

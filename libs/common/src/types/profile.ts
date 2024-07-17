@@ -9,14 +9,14 @@ import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { Empty } from "./empty";
 
-export const protobufPackage = "profile";
+export const protobufPackage = "user";
 
 export interface ProfileMessage {
   id: string;
   name: string;
   avatar: string;
   bio: string;
-  dob: number;
+  dob: string;
   country: string;
   gender: string;
   alias: string;
@@ -26,7 +26,7 @@ export interface ProfilesMessage {
   profiles: ProfileMessage[];
 }
 
-export interface ProfileId {
+export interface Id {
   id: string;
 }
 
@@ -34,42 +34,46 @@ export interface ProfileDto {
   name?: string | undefined;
   avatar?: string | undefined;
   bio?: string | undefined;
-  dob?: number | undefined;
+  dob?: string | undefined;
   country?: string | undefined;
   gender?: string | undefined;
   alias?: string | undefined;
   userId: string;
 }
 
-export const PROFILE_PACKAGE_NAME = "profile";
+export const USER_PACKAGE_NAME = "user";
 
 export interface ProfileServiceClient {
   findAll(request: Empty): Observable<ProfilesMessage>;
 
-  findById(request: ProfileId): Observable<ProfileMessage>;
+  findById(request: Id): Observable<ProfileMessage>;
+
+  findByUserId(request: Id): Observable<ProfileMessage>;
 
   create(request: ProfileDto): Observable<ProfileMessage>;
 
   update(request: ProfileDto): Observable<ProfileMessage>;
 
-  delete(request: ProfileId): Observable<Empty>;
+  delete(request: Id): Observable<Empty>;
 }
 
 export interface ProfileServiceController {
   findAll(request: Empty): Promise<ProfilesMessage> | Observable<ProfilesMessage> | ProfilesMessage;
 
-  findById(request: ProfileId): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
+  findById(request: Id): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
+
+  findByUserId(request: Id): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
 
   create(request: ProfileDto): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
 
   update(request: ProfileDto): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
 
-  delete(request: ProfileId): Promise<Empty> | Observable<Empty> | Empty;
+  delete(request: Id): Promise<Empty> | Observable<Empty> | Empty;
 }
 
 export function ProfileServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["findAll", "findById", "create", "update", "delete"];
+    const grpcMethods: string[] = ["findAll", "findById", "findByUserId", "create", "update", "delete"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ProfileService", method)(constructor.prototype[method], method, descriptor);

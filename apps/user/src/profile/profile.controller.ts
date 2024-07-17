@@ -1,7 +1,7 @@
 import { Empty } from '@app/common/types/empty';
 import {
+  Id,
   ProfileDto,
-  ProfileId,
   ProfileMessage,
   ProfileServiceController,
   ProfileServiceControllerMethods,
@@ -18,6 +18,11 @@ import { ProfileService } from './profile.service';
 @UseInterceptors(ErrorInterceptor)
 export class ProfileController implements ProfileServiceController {
   constructor(private readonly profileService: ProfileService) {}
+  findByUserId(
+    request: Id,
+  ): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage {
+    return this.profileService.findByUserId(request.id);
+  }
 
   findAll(
     request: Empty,
@@ -25,7 +30,7 @@ export class ProfileController implements ProfileServiceController {
     return this.profileService.findAll(request);
   }
   findById(
-    request: ProfileId,
+    request: Id,
   ): ProfileMessage | Promise<ProfileMessage> | Observable<ProfileMessage> {
     return this.profileService.findById(request.id);
   }
@@ -57,7 +62,7 @@ export class ProfileController implements ProfileServiceController {
       },
     });
   }
-  delete(request: ProfileId): Empty | Promise<Empty> | Observable<Empty> {
+  delete(request: Id): Empty | Promise<Empty> | Observable<Empty> {
     return null;
   }
 }

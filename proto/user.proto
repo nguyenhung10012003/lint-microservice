@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package user;
 import "profile.proto";
+import "query.proto";
 
 service UserService {
     rpc findAll(FindAllParams) returns (UsersMessage);
@@ -20,9 +21,9 @@ message UserMessage {
     string id = 1;
     string email = 2;
     string password = 3;
-    optional profile.ProfileMessage profile = 4;
-    int64 createdAt = 5;
-    int64 updatedAt = 6;
+    optional ProfileMessage profile = 4;
+    string createdAt = 5;
+    string updatedAt = 6;
 }
 
 message CreateUserDto {
@@ -52,8 +53,8 @@ message FindOneParams {
     optional string id = 1;
     optional string email = 2;
     optional string password = 3;
-    optional NumberFilter createdAt = 4;
-    optional NumberFilter updatedAt = 5; 
+    optional string createdAt = 4;
+    optional string updatedAt = 5; 
 }
 
 message UserSelect {
@@ -66,41 +67,18 @@ message UserSelect {
 }
 
 message UserOrderBy {
-    optional Order email = 1;
-    optional Order password = 2;
-    optional Order createdAt = 4;
-    optional Order updatedAt = 5;
+    optional SortOrder email = 1;
+    optional SortOrder password = 2;
+    optional SortOrder createdAt = 4;
+    optional SortOrder updatedAt = 5;
 }
 
 message UserWhere {
     optional StringFilter id = 1;
     optional StringFilter email = 2;
     optional StringFilter password = 3;
-    optional NumberFilter createdAt = 4;
-    optional NumberFilter updatedAt = 5;
+    optional StringFilter createdAt = 4;
+    optional StringFilter updatedAt = 5;
     repeated UserWhere AND = 6;
     repeated UserWhere OR = 7;
-}
-
-enum Order {
-    ASC = 0;
-    DESC = 1;
-}
-
-message StringFilter {
-    optional string equals = 1;
-    optional string ne = 2;
-    repeated string in = 3;
-    repeated string notIn = 4;
-    optional string search = 5;
-    optional string contains = 6;
-}
-
-message NumberFilter {
-    optional int64 eq = 1;
-    optional int64 ne = 2;
-    optional int64 gt = 3;
-    optional int64 gte = 4;
-    optional int64 lt = 5;
-    optional int64 lte = 6;
 }

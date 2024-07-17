@@ -19,6 +19,8 @@ export const prismaExceptionHandler = (
   switch (error.code) {
     case 'P2002':
       throw new GrpcAlreadyExistsException('Duplicate key');
+    case 'P2011':
+      throw new GrpcInvalidArgumentException('Invalid input data');
     default:
       throw new GrpcUnknownException('Unhandle prisma error');
   }
