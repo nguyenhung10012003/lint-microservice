@@ -34,8 +34,9 @@ export class ProfileService {
       },
     });
     return {
-      ...profile,
-      dob: profile.dob?.getTime(),
+      id: profile.id,
+      name: profile.name,
+      avatar: profile.avatar,
     };
   }
 

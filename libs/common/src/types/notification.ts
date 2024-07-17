@@ -20,9 +20,10 @@ export enum NotificationType {
 
 export interface UpsertNotificationDto {
   type: NotificationType;
-  post?: Obj | undefined;
+  diObject?: Obj | undefined;
   subject: Obj | undefined;
   userId: string;
+  postId?: string | undefined;
 }
 
 export interface UpdateStatusDto {
@@ -32,7 +33,7 @@ export interface UpdateStatusDto {
 export interface Notification {
   id: string;
   type: NotificationType;
-  post?: Obj | undefined;
+  diObject?: Obj | undefined;
   subjects: Obj[];
   subjectCount: number;
   userId: string;

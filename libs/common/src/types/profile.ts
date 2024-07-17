@@ -45,12 +45,18 @@ export interface ProfileDto {
   userId: string;
 }
 
+export interface ResponseProfile {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
 export const PROFILE_PACKAGE_NAME = "profile";
 
 export interface ProfileServiceClient {
   findAll(request: Empty): Observable<ProfilesMessage>;
 
-  findOne(request: UserId): Observable<ProfileMessage>;
+  findOne(request: UserId): Observable<ResponseProfile>;
 
   findById(request: ProfileId): Observable<ProfileMessage>;
 
@@ -64,7 +70,7 @@ export interface ProfileServiceClient {
 export interface ProfileServiceController {
   findAll(request: Empty): Promise<ProfilesMessage> | Observable<ProfilesMessage> | ProfilesMessage;
 
-  findOne(request: UserId): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
+  findOne(request: UserId): Promise<ResponseProfile> | Observable<ResponseProfile> | ResponseProfile;
 
   findById(request: ProfileId): Promise<ProfileMessage> | Observable<ProfileMessage> | ProfileMessage;
 

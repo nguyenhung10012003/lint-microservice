@@ -6,6 +6,7 @@ import {
   ProfileServiceController,
   ProfileServiceControllerMethods,
   ProfilesMessage,
+  ResponseProfile,
   UserId,
 } from '@app/common/types/profile';
 import { Controller, UseInterceptors } from '@nestjs/common';
@@ -34,7 +35,7 @@ export class ProfileController implements ProfileServiceController {
 
   findOne(
     request: UserId,
-  ): ProfileMessage | Promise<ProfileMessage> | Observable<ProfileMessage> {
+  ): ResponseProfile | Promise<ResponseProfile> | Observable<ResponseProfile> {
     return this.profileService.findOne(request.userId);
   }
   create(

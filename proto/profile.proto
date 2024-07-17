@@ -6,7 +6,7 @@ import "empty.proto";
 
 service ProfileService {
   rpc findAll(Empty) returns (ProfilesMessage);
-  rpc findOne(UserId) returns (ProfileMessage);
+  rpc findOne(UserId) returns (ResponseProfile);
   rpc findById(ProfileId) returns (ProfileMessage);
   rpc create(ProfileDto) returns (ProfileMessage);
   rpc update(ProfileDto) returns (ProfileMessage);
@@ -45,6 +45,12 @@ message ProfileDto {
   optional string gender = 6;
   optional string alias = 7;
   string userId = 8;
+}
+
+message ResponseProfile {
+  string id = 1;
+  string name = 2;
+  string avatar = 3;
 }
 
 

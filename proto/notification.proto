@@ -12,9 +12,10 @@ service NotificationService {
 
 message UpsertNotificationDto {
   NotificationType type = 1;
-  optional Obj post = 2;
+  optional Obj diObject = 2;
   Obj subject = 3;
   string userId = 4;
+  optional string postId = 5;
 }
 
 message UpdateStatusDto {
@@ -24,7 +25,7 @@ message UpdateStatusDto {
 message Notification {
   string id = 1;
   NotificationType type = 2;
-  optional Obj post = 3; 
+  optional Obj diObject = 3; 
   repeated Obj subjects = 4;
   int32 subjectCount = 5;
   string userId = 6;

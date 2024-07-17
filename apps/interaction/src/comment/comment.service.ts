@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/prisma-interaction-client';
 import { PrismaService } from '../prisma.service';
 import { ProducerService } from '../kafka/producer.service';
+import { NotificationPayload } from '@app/common/types/notification.payload';
 
 @Injectable()
 export class CommentService {
@@ -12,25 +13,31 @@ export class CommentService {
   ) {}
 
   async create(comment: CommentDto) {
-    // const newComment = await this.prismaService.comment.create({
-    //   data: comment,
-    // });
+    const newComment = await this.prismaService.comment.create({
+      data: comment,
+    });
 
+    const payload: NotificationPayload = {
+      postId: newComment.postId,
+      subjectId: newComment.userId,
+      diId: newComment.id,
+      diName: newComment.content,
+    };
     await this.producerService.produce({
       topic: 'notification',
       messages: [
         {
           key: 'comment',
-          value: JSON.stringify(comment),
+          value: JSON.stringify(payload),
         },
       ],
     });
 
-    // return {
-    //   ...newComment,
-    //   createdAt: newComment.createdAt?.toISOString(),
-    //   updatedAt: newComment.updatedAt?.toISOString(),
-    // };
+    return {
+      ...newComment,
+      createdAt: newComment.createdAt?.toISOString(),
+      updatedAt: newComment.updatedAt?.toISOString(),
+    };
   }
 
   async delete(where: Prisma.CommentWhereUniqueInput) {
