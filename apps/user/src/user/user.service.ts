@@ -1,7 +1,7 @@
 import { UsersMessage } from '@app/common/types/user';
 import { hashPassword } from '@app/common/utils/hashing';
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/prisma-user-client';
+import { Prisma } from '@prisma/prisma-user-client';
 import { PrismaService } from '../prisma.service';
 import { UserCreateInput } from './model/user.input';
 import { UserModel } from './model/user.model';
@@ -24,23 +24,33 @@ export class UserService {
       users: users.map((user) => {
         return {
           ...user,
-          createdAt: user.createdAt?.getTime(),
-          updatedAt: user.updatedAt?.getTime(),
+          createdAt: user.createdAt?.toISOString(),
+          updatedAt: user.updatedAt?.toISOString(),
           profile: {
             ...user.profile,
-            dob: user.profile?.dob?.getTime(),
+            dob: user.profile?.dob?.toISOString(),
           },
         };
       }),
     };
   }
 
-  async findById(id: string): Promise<User> {
-    return this.prismaService.user.findUnique({
+  async findById(id: string, include?: Prisma.UserInclude) {
+    const user = await this.prismaService.user.findUnique({
       where: {
         id,
       },
+      include: include,
     });
+    return {
+      ...user,
+      createdAt: user?.createdAt.toISOString(),
+      updatedAt: user?.updatedAt.toISOString(),
+      profile: {
+        ...user?.profile,
+        dob: user?.profile?.dob?.toISOString(),
+      },
+    };
   }
 
   async findOne(data: Prisma.UserWhereUniqueInput) {
@@ -50,8 +60,8 @@ export class UserService {
 
     return {
       ...user,
-      createdAt: user?.createdAt.getTime(),
-      updatedAt: user?.updatedAt.getTime(),
+      createdAt: user?.createdAt.toISOString(),
+      updatedAt: user?.updatedAt.toISOString(),
     };
   }
 
@@ -66,8 +76,24 @@ export class UserService {
 
     return {
       ...user,
-      createdAt: user.createdAt.getTime(),
-      updatedAt: user.updatedAt.getTime(),
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+    };
+  }
+
+  async update(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }) {
+    const user = await this.prismaService.user.update({
+      where: params.where,
+      data: params.data,
+    });
+
+    return {
+      ...user,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
     };
   }
 }

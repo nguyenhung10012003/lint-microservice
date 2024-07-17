@@ -13,11 +13,12 @@ message SigninRequest {
 }
 
 message Token {
-  string token = 1;
-  string type = 2;
-  string refreshToken = 3;
-  string issuedAt = 4;
-  string expireAt = 5;
+  string userId = 1;
+  string token = 2;
+  string type = 3;
+  string refreshToken = 4;
+  string issuedAt = 5;
+  string expireAt = 6;
 }
 
 message RefreshTokenRequest {

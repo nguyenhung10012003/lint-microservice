@@ -10,5 +10,4 @@ export class ProfileModel implements Profile {
   avatar: string | null;
   alias: string | null;
   bio: string | null;
-
 }

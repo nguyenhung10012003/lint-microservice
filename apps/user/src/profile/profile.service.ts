@@ -21,7 +21,7 @@ export class ProfileService {
       profiles: profiles.map((profile) => {
         return {
           ...profile,
-          dob: profile.dob?.getTime(),
+          dob: profile.dob?.toISOString(),
         };
       }),
     };
@@ -42,7 +42,19 @@ export class ProfileService {
     });
     return {
       ...profile,
-      dob: profile.dob.getTime(),
+      dob: profile?.dob?.toISOString(),
+    };
+  }
+
+  async findByUserId(userId: string) {
+    const profile = await this.prismaService.profile.findFirst({
+      where: {
+        userId,
+      },
+    });
+    return {
+      ...profile,
+      dob: profile?.dob?.toISOString(),
     };
   }
 
@@ -53,7 +65,7 @@ export class ProfileService {
     });
     return {
       ...profile,
-      dob: profile.dob?.getTime(),
+      dob: profile.dob?.toISOString(),
     };
   }
 
@@ -64,7 +76,7 @@ export class ProfileService {
     const profile = await this.prismaService.profile.update(params);
     return {
       ...profile,
-      dob: profile.dob?.getTime(),
+      dob: profile.dob?.toISOString(),
     };
   }
 }

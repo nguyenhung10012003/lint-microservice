@@ -3,6 +3,7 @@ syntax = "proto3";
 package post;
 import "media.proto";
 import "tag.proto";
+import "query.proto";
 
 service PostService {
   rpc create(PostDto) returns (Post) {}
@@ -43,8 +44,9 @@ message Posts {
 }
 
 message PostWhere {
-  optional string id = 1;
-  optional string userId = 2;
+  optional StringFilter id = 1;
+  optional StringFilter userId = 2;
+  optional DateTimeFilter createdAt = 3;
 }
 
 message PostWhereUnique {
@@ -56,8 +58,23 @@ message PostFindParams {
   optional PostWhere where = 1;
   optional int32 skip = 2;
   optional int32 take = 3;
-  optional string orderBy = 4;
+  optional PostOrderBy orderBy = 4;
   optional PostSelect select = 5;
+}
+
+message PostOrderBy {
+  optional SortOrder id = 1;
+  optional SortOrder userId = 2;
+  optional SortOrder content = 3;
+  optional SortOrder views = 4;
+  optional SortOrder share = 5;
+  optional SortOrder medias = 6;
+  optional SortOrder tags = 7;
+  optional SortOrder sourceId = 8;
+  optional SortOrder scope = 9;
+  optional SortOrder sourcePost = 10;
+  optional SortOrder createdAt = 11;
+  optional SortOrder updatedAt = 12;
 }
 
 message PostSelect {

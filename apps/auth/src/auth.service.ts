@@ -29,6 +29,7 @@ export class AuthService implements OnModuleInit {
     if (!isMatch) throw new GrpcUnauthenticatedException('Invalid password');
     const payload = { sub: user.id, username: user.email };
     return {
+      userId: user.id,
       token: await this.createToken(
         payload,
         process.env.JWT_ACCESS_TOKEN_SECRET,
@@ -60,6 +61,7 @@ export class AuthService implements OnModuleInit {
       secret: process.env.JWT_REFRESH_TOKEN_SECRET,
     });
     return {
+      userId: sub,
       token: await this.createToken(
         { sub, username },
         process.env.JWT_ACCESS_TOKEN_SECRET,

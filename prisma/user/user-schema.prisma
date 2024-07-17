@@ -34,6 +34,6 @@ model Profile {
   country String?
   gender  String?
   avatar  String?
-  alias   String?
+  alias   String?   @unique
   bio     String?
 }
