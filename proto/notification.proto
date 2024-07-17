@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package notification;
+
+service NotificationService {
+  rpc create(CreateNotificationDto) returns (Notification) {}
+  rpc update(UpdateNotificationDto) returns (Notification) {}
+  rpc findMany(NotificationFindParams) returns (Notifications) {}
+  rpc delete(NotificationWhereUnique) returns (Empty) {}
+  rpc findOne(NotificationWhereUnique) returns (Notification) {}
+}
+
+message CreateNotificationDto {
+  optional string postId = 1;
+  string interactorId = 2;
+  string userId = 3;
+  string content = 4;
+}
+
+message UpdateNotificationDto {
+  string id = 1;
+  bool read = 2;
+}
+
+message Notification {
+  string id = 1;
+  optional string postId = 2;
+  string interactorId = 3;
+  string userId = 4;
+  string content = 5;
+  bool read = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message Notifications {
+  repeated Notification notifications = 1;
+}
+
+message NotificationWhereUnique {
+  string id = 1;
+}
+
+message NotificationWhere {
+  string userId = 1;
+}
+
+message NotificationFindParams {
+  NotificationWhere where = 1;
+  optional int32 skip = 2;
+  optional int32 take = 3;
+  optional string orderBy = 4;
+}
+
+message Empty {}

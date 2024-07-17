@@ -67,4 +67,17 @@ export class PostService {
       }),
     };
   }
+
+  async findOne(where: Prisma.PostWhereUniqueInput) {
+    const post = await this.prisma.post.findUnique({ where });
+    return {
+      ...post,
+      scope:
+        post.scope === $Enums.PostScope.PUBLIC
+          ? PostScope.PUBLIC
+          : PostScope.PRIVATE,
+      createdAt: post.createdAt?.toISOString(),
+      updatedAt: post.updatedAt?.toISOString(),
+    };
+  }
 }

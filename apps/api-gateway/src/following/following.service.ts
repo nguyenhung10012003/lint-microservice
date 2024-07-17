@@ -7,22 +7,41 @@ import {
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { MicroService } from '../grpc-client/microservice';
+import {
+  NOTIFICATION_SERVICE_NAME,
+  NotificationServiceClient,
+} from '@app/common/types/notification';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class FollowingService implements OnModuleInit {
   private followingClient: FollowingServiceClient;
+  private notificationService: NotificationServiceClient;
+
   constructor(
     @Inject(MicroService.RELATIONSHIP_SERVICE)
     private readonly client: ClientGrpc,
+    @Inject(MicroService.NOTIFICATION_SERVICE)
+    private readonly notificationClient: ClientGrpc,
   ) {}
 
   onModuleInit() {
     this.followingClient = this.client.getService<FollowingServiceClient>(
       FOLLOWING_SERVICE_NAME,
     );
+    this.notificationService =
+      this.notificationClient.getService<NotificationServiceClient>(
+        NOTIFICATION_SERVICE_NAME,
+      );
   }
 
   async create(follow: FollowDto) {
+    const notification = {
+      interactorId: follow.followerId,
+      userId: follow.followingId,
+      content: 'new follower',
+    };
+    await firstValueFrom(this.notificationService.create(notification));
     return this.followingClient.create(follow);
   }
 

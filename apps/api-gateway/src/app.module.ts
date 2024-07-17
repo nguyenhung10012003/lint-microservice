@@ -15,6 +15,9 @@ import { LikeModule } from './like/like.module';
 import { PostModule } from './post/post.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
+import { CommentModule } from './comment/comment.module';
+import { NotificationModule } from './notification/notification.module';
+
 
 @Module({
   imports: [
@@ -27,6 +30,7 @@ import { UserModule } from './user/user.module';
     PostModule,
     LikeModule,
     CommentModule,
+    NotificationModule,
     FeedModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../local/media'),
