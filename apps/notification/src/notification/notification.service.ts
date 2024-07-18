@@ -151,6 +151,7 @@ export class NotificationService implements OnModuleInit {
       upsertDto.type,
       upsertDto.diObject.name,
     );
+    console.log('content 1: ', content);
 
     const data = {
       type: upsertDto.type.toString(),
@@ -167,6 +168,8 @@ export class NotificationService implements OnModuleInit {
       url: upsertDto.url,
       read: false,
     };
+    console.log('content 2: ', data.content);
+    console.log('content 3: ', JSON.parse(data.content));
 
     let upsertNoti = null;
     let notificationType = ''; // update or create
@@ -234,7 +237,6 @@ export class NotificationService implements OnModuleInit {
   }
 
   async findMany(param: NotificationFindParams): Promise<Notifications> {
-    console.log('findMany', param);
     const notifications = await this.prismaService.notification.findMany({
       where: {
         userId: param.where.userId,
@@ -245,6 +247,8 @@ export class NotificationService implements OnModuleInit {
         createdAt: param.orderBy == 'asc' ? 'asc' : 'desc',
       },
     });
+
+    console.log(notifications);
 
     return {
       notifications: notifications.map((notification) => {

@@ -39,7 +39,7 @@ export interface Notification {
   diObject?: Obj | undefined;
   subject: Obj | undefined;
   url: string;
-  content: string;
+  content: Content | undefined;
   read: boolean;
   createdAt: string;
   updatedAt: string;
@@ -49,6 +49,16 @@ export interface Obj {
   id: string;
   name?: string | undefined;
   imageUrl?: string | undefined;
+}
+
+export interface Content {
+  text: string;
+  highlights: Highlight[];
+}
+
+export interface Highlight {
+  length: number;
+  offset: number;
 }
 
 export interface Notifications {
