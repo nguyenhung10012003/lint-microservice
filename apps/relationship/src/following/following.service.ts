@@ -12,6 +12,8 @@ export class FollowingService {
     private readonly producerService: ProducerService,
   ) {}
   async create(data: FollowDto) {
+    const follow = await this.prismaService.follow.create({ data });
+
     const notificationPayload: NotificationPayload = {
       subjectId: data.followerId,
       diId: data.followingId,
@@ -26,7 +28,7 @@ export class FollowingService {
       ],
     });
 
-    return this.prismaService.follow.create({ data });
+    return follow;
   }
 
   async delete(where: Prisma.followWhereUniqueInput) {

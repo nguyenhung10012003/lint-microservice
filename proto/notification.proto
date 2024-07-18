@@ -3,42 +3,42 @@ syntax = "proto3";
 package notification;
 
 service NotificationService {
-  rpc upsert(UpsertNotificationDto) returns (Notification) {}
-  rpc updateStatus(UpdateStatusDto) returns (Notification) {}
+  rpc updateStatus(UpdateStatusDto) returns (Empty) {}
   rpc findMany(NotificationFindParams) returns (Notifications) {}
   rpc delete(NotificationWhereUnique) returns (Empty) {}
-  rpc findOne(NotificationWhereUnique) returns (Notification) {}
 }
 
 message UpsertNotificationDto {
   NotificationType type = 1;
   optional Obj diObject = 2;
   Obj subject = 3;
-  string userId = 4;
+  optional string userId = 4;
   optional string postId = 5;
+  string url = 6;
 }
 
 message UpdateStatusDto {
   string id = 1;
+  optional string userId = 2;
+  bool read = 3;
 }
 
 message Notification {
   string id = 1;
-  NotificationType type = 2;
+  string userId = 2;
   optional Obj diObject = 3; 
-  repeated Obj subjects = 4;
-  int32 subjectCount = 5;
-  string userId = 6;
-  string content = 7;
-  bool read = 8;
-  string createdAt = 9;
-  string updatedAt = 10;
+  Obj subject = 4;
+  string url = 5;
+  string content = 6;
+  bool read = 7;
+  string createdAt = 8;
+  string updatedAt = 9;
 }
 
 message Obj {
   string id =  1;
   optional string name = 2;
-  optional string imageUrl = 4;
+  optional string imageUrl = 3;
 }
 
 message Notifications {
@@ -47,6 +47,7 @@ message Notifications {
 
 message NotificationWhereUnique {
   string id = 1;
+  optional string userId = 2;
 }
 
 message NotificationWhere {

@@ -12,11 +12,12 @@ model Notification {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   type          String
   postId        String?
+  userId        String
   content       Json
   diObject      Json?
-  subjects      Json[]
+  subject       Json 
   subjectCount  Int
-  userId        String
+  url           String
   read          Boolean
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

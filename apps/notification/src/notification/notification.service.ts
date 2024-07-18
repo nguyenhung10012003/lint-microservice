@@ -1,4 +1,9 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Post, PostServiceClient } from '@app/common/types/post';
 import { MicroService } from '../grpc-client/microservice';
@@ -7,6 +12,10 @@ import { ConsumerService } from '../kafka/consumer.service';
 import {
   UpsertNotificationDto,
   NotificationType,
+  UpdateStatusDto,
+  NotificationFindParams,
+  Notifications,
+  NotificationWhereUnique,
 } from '@app/common/types/notification';
 import {
   PROFILE_SERVICE_NAME,
@@ -14,9 +23,14 @@ import {
 } from '@app/common/types/profile';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { firstValueFrom } from 'rxjs';
-import { generateNotificationContent } from './helper/generateContent';
-import { getFirstWords } from './helper/getFirstWord';
+
 import { NotificationPayload } from '@app/common/types/notification.payload';
+import {
+  generateNotificationContent,
+  generateUrl,
+  getFirstWords,
+  getNotificationType,
+} from './helper/helper';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
@@ -56,7 +70,7 @@ export class NotificationService implements OnModuleInit {
 
   async handleNotification(key: Buffer, value: Buffer) {
     const toStringKey = key.toString();
-    const type: NotificationType = this.getNotificationType(toStringKey);
+    const type: NotificationType = getNotificationType(toStringKey);
 
     const toStringValue = value.toString();
     const parsedValue = JSON.parse(toStringValue);
@@ -66,12 +80,20 @@ export class NotificationService implements OnModuleInit {
       this.profileService.findOne({ userId: payload.subjectId }),
     );
 
+    if (!subject) {
+      throw new BadRequestException('Subject not found');
+    }
+
     let post: Post;
 
     if (payload.postId) {
       post = await firstValueFrom(
         this.postService.findOne({ id: payload.postId }),
       );
+    }
+
+    if (type == NotificationType.LIKE) {
+      payload.diName = post.content;
     }
 
     const data: UpsertNotificationDto = {
@@ -86,6 +108,7 @@ export class NotificationService implements OnModuleInit {
         name: subject.name,
         imageUrl: subject.avatar,
       },
+      url: generateUrl(type, payload.diId),
       // if post is null, it is a follow/other
       userId: post ? post.userId : payload.diId,
       postId: post ? post.id : null,
@@ -94,27 +117,34 @@ export class NotificationService implements OnModuleInit {
   }
 
   async upsert(upsertDto: UpsertNotificationDto) {
-    const notification = await this.prismaService.notification.findFirst({
-      where: {
-        AND: [
-          {
-            type: upsertDto.type.toString(),
-          },
-          { postId: upsertDto.postId },
-          { userId: upsertDto.userId },
-        ],
-      },
-    });
+    let notification = null;
 
-    if (notification) {
-      notification.subjects.forEach((subject) => {
-        if (subject == JSON.stringify(upsertDto.subject)) {
-          return;
-        }
+    if (upsertDto.postId) {
+      notification = await this.prismaService.notification.findFirst({
+        where: {
+          AND: [
+            {
+              type: upsertDto.type.toString(),
+            },
+            { postId: upsertDto.postId },
+            { userId: upsertDto.userId },
+          ],
+        },
       });
     }
 
-    const subjectCount = notification ? notification.subjectCount + 1 : 1;
+    let updateSubject = true; // not add subject or increase subject count if subject is the same
+    if (notification) {
+      for (const subject of notification.subjects) {
+        if (subject === JSON.stringify(upsertDto.subject)) {
+          updateSubject = false;
+        }
+      }
+    }
+
+    const subjectCount = notification
+      ? notification.subjectCount + updateSubject
+      : 1;
     const content = generateNotificationContent(
       upsertDto.subject.name,
       subjectCount,
@@ -129,49 +159,109 @@ export class NotificationService implements OnModuleInit {
       userId: upsertDto.userId,
       content: JSON.stringify(content),
       subjects: notification
-        ? notification.subjects.push(JSON.stringify(upsertDto.subject))
+        ? updateSubject
+          ? [...notification.subjects, JSON.stringify(upsertDto.subject)]
+          : notification.subjects
         : [JSON.stringify(upsertDto.subject)],
       subjectCount: subjectCount,
+      url: upsertDto.url,
       read: false,
     };
 
-    if (
-      notification &&
-      (upsertDto.type == NotificationType.COMMENT ||
-        upsertDto.type == NotificationType.LIKE)
-    ) {
-      notification.subjects.push(JSON.stringify(upsertDto.subject));
-      const updated = await this.prismaService.notification.update({
+    let upsertNoti = null;
+    let notificationType = ''; // update or create
+    if (notification) {
+      notificationType = 'update';
+      upsertNoti = await this.prismaService.notification.update({
         where: {
           id: notification.id,
         },
         data: {
           ...data,
-          subjects: notification.subjects,
         },
       });
-      this.eventEmitter.emit('notification.updated', updated);
     } else {
-      const created = await this.prismaService.notification.create({
-        data: {
-          ...data,
-          subjects: [JSON.stringify(upsertDto.subject)],
-        },
+      notificationType = 'create';
+      upsertNoti = await this.prismaService.notification.create({
+        data: data,
       });
-      this.eventEmitter.emit('notification.created', created);
     }
+
+    const lastSubject = upsertNoti.subjects[upsertNoti.subjects.length - 1];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { subjects, subjectCount: _, ...rest } = upsertNoti;
+    this.eventEmitter.emit('notification', {
+      notificationType,
+      ...rest,
+      lastSubject,
+    });
   }
 
-  getNotificationType(stringKey: string): NotificationType {
-    switch (stringKey) {
-      case 'comment':
-        return NotificationType.COMMENT;
-      case 'like':
-        return NotificationType.LIKE;
-      case 'follow':
-        return NotificationType.FOLLOW;
-      default:
-        return NotificationType.OTHER;
+  async delete(where: NotificationWhereUnique) {
+    const isExist = await this.prismaService.notification.findUnique({
+      where: {
+        id: where.id,
+      },
+    });
+
+    if (!isExist || isExist.userId !== where.userId) {
+      throw new BadRequestException('Notification not found');
     }
+
+    return {
+      notifications: await this.prismaService.notification.findMany({
+        where: {
+          id: where.id,
+        },
+      }),
+    };
+  }
+
+  async updateStatus(updateStatusDto: UpdateStatusDto) {
+    const existNoti = await this.prismaService.notification.findUnique({
+      where: {
+        id: updateStatusDto.id,
+      },
+    });
+    if (!existNoti || existNoti.userId !== updateStatusDto.userId) {
+      throw new BadRequestException('Notification not found');
+    }
+
+    await this.prismaService.notification.update({
+      where: { id: updateStatusDto.id },
+      data: { read: updateStatusDto.read },
+    });
+  }
+
+  async findMany(param: NotificationFindParams): Promise<Notifications> {
+    console.log('findMany', param);
+    const notifications = await this.prismaService.notification.findMany({
+      where: {
+        userId: param.where.userId,
+      },
+      skip: param.skip,
+      take: param.take,
+      orderBy: {
+        createdAt: param.orderBy == 'asc' ? 'asc' : 'desc',
+      },
+    });
+
+    return {
+      notifications: notifications.map((notification) => {
+        return {
+          id: notification.id,
+          userId: notification.userId,
+          content: JSON.parse(notification.content.toString()),
+          diObject: JSON.parse(notification.diObject.toString()),
+          subject: JSON.parse(
+            notification.subjects[notification.subjects.length - 1].toString(),
+          ),
+          url: notification.url,
+          read: notification.read,
+          createdAt: notification.createdAt.toISOString(),
+          updatedAt: notification.updatedAt.toISOString(),
+        };
+      }),
+    };
   }
 }
