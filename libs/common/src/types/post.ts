@@ -5,13 +5,13 @@
 // source: post.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
-import { Media, MediaDto } from "./media";
-import { DateTimeFilter, SortOrder, StringFilter } from "./query";
-import { Tag, TagDto } from "./tag";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
+import { Media, MediaDto } from './media';
+import { DateTimeFilter, SortOrder, StringFilter } from './query';
+import { Tag, TagDto } from './tag';
 
-export const protobufPackage = "post";
+export const protobufPackage = 'post';
 
 export enum PostScope {
   PUBLIC = 0,
@@ -24,8 +24,8 @@ export interface PostDto {
   content?: string | undefined;
   views?: number | undefined;
   share?: number | undefined;
-  medias?: MediaDto[];
-  tags?: TagDto[];
+  medias: MediaDto[];
+  tags: TagDto[];
   sourceId?: string | undefined;
   scope?: PostScope | undefined;
 }
@@ -98,7 +98,7 @@ export interface PostSelect {
   updatedAt?: boolean | undefined;
 }
 
-export const POST_PACKAGE_NAME = "post";
+export const POST_PACKAGE_NAME = 'post';
 
 export interface PostServiceClient {
   create(request: PostDto): Observable<Post>;
@@ -126,17 +126,37 @@ export interface PostServiceController {
 
 export function PostServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "update", "find", "findOne", "delete"];
+    const grpcMethods: string[] = [
+      'create',
+      'update',
+      'find',
+      'findOne',
+      'delete',
+    ];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("PostService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcMethod('PostService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("PostService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcStreamMethod('PostService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
   };
 }
 
-export const POST_SERVICE_NAME = "PostService";
+export const POST_SERVICE_NAME = 'PostService';

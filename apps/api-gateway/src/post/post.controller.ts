@@ -1,10 +1,9 @@
 import { MediaType } from '@app/common/types/media';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
-  HttpStatus,
-  ParseFilePipeBuilder,
   Post,
   Query,
   Req,
@@ -38,30 +37,32 @@ export class PostController {
           cb(null, `${filename}.${extension}`);
         },
       }),
+      fileFilter: (req, file, cb) => {
+        if (file) {
+          if (!fileAcceptReg.test(file.mimetype))
+            return cb(new BadRequestException('File is invalid type'), false);
+          else if (file.size > +process.env.MAX_MEDIA_FILE_SIZE)
+            return cb(new BadRequestException('File is too large'), false);
+          cb(null, true);
+        } else {
+          cb(null, false);
+        }
+      },
     }),
   )
   async create(
     @Req() req: any,
-    @UploadedFiles(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: fileAcceptReg,
-        })
-        .addMaxSizeValidator({
-          maxSize: +process.env.MAX_MEDIA_FILE_SIZE,
-        })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
-    )
-    files: Express.Multer.File[],
     @Body() post: PostDto,
+    @UploadedFiles()
+    files?: Express.Multer.File[],
   ) {
     return this.postService.create({
+      ...post,
       userId: req.user.userId,
-      medias: files.map((file) => ({
+      medias: files?.map((file) => ({
         url: file.path,
         type: MediaType.IMAGE,
       })),
-      ...post,
       tags: post.tags?.map((tag) => ({ name: tag })),
     });
   }

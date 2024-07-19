@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 
-export const protobufPackage = '';
+export const protobufPackage = "";
 
 export enum SortOrder {
   ASC = 0,
@@ -47,4 +47,4 @@ export interface DateTimeFilter {
   gte?: string | undefined;
 }
 
-export const _PACKAGE_NAME = '';
+export const _PACKAGE_NAME = "";
