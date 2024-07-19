@@ -7,6 +7,7 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { IntFilter, StringFilter } from "./query";
 
 export const protobufPackage = "post";
 
@@ -25,12 +26,13 @@ export interface Tags {
 }
 
 export interface TagWhere {
-  id?: number | undefined;
-  name?: string | undefined;
+  id?: IntFilter | undefined;
+  name?: StringFilter | undefined;
 }
 
 export interface TagWhereUnique {
-  id?: number | undefined;
+  id: number;
+  name?: string | undefined;
 }
 
 export interface TagFindParams {
