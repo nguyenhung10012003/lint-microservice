@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { PostController } from "./post.controller";
-import { PostService } from "./post.service";
-import { GrpcClientModule } from "../grpc-client/grpc-client.module";
+import { Module } from '@nestjs/common';
+import { PostController } from './post.controller';
+import { PostService } from './post.service';
+import { GrpcClientModule } from '../grpc-client/grpc-client.module';
 
 @Module({
   imports: [GrpcClientModule],

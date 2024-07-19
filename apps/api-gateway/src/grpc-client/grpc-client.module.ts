@@ -6,6 +6,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { MicroService } from './microservice';
 import { INTERACTION_PACKAGE_NAME } from '@app/common/types/comment';
+import { NOTIFICATION_PACKAGE_NAME } from '@app/common/types/notification';
 
 const GrpcClients = ClientsModule.register([
   {
@@ -65,7 +66,16 @@ const GrpcClients = ClientsModule.register([
         join(__dirname, '../interaction/like.proto'),
       ],
     },
-  }
+  },
+  {
+    name: MicroService.NOTIFICATION_SERVICE,
+    transport: Transport.GRPC,
+    options: {
+      url: process.env.NOTIFICATION_URL,
+      package: NOTIFICATION_PACKAGE_NAME,
+      protoPath: [join(__dirname, '../notification/notification.proto')],
+    },
+  },
 ]);
 
 @Module({

@@ -16,10 +16,11 @@ import { UserService } from './user.service';
 
 @Controller('user')
 @UseInterceptors(GrpcToHttpInterceptor)
-@UseGuards(AccessTokenGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
   @Get()
+  @UseGuards(AccessTokenGuard)
   findAll(
     @Query()
     query: ManyQuery,
@@ -29,6 +30,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(AccessTokenGuard)
   findById(@Param('id') id: string) {
     return this.userService.findById(id);
   }

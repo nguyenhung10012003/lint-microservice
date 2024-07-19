@@ -25,7 +25,7 @@ export class PostController implements PostServiceController {
     return this.postService.findMany(request);
   }
   findOne(request: PostWhereUnique): Post | Promise<Post> | Observable<Post> {
-    throw new Error('Method not implemented.');
+    return this.postService.findOne(request);
   }
   delete(request: PostWhereUnique): Post | Promise<Post> | Observable<Post> {
     throw new Error('Method not implemented.');
