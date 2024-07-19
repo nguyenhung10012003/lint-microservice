@@ -1,6 +1,5 @@
 import { RELATIONSHIP_PACKAGE_NAME } from '@app/common/types/following';
 import { POST_PACKAGE_NAME } from '@app/common/types/media';
-import { PROFILE_PACKAGE_NAME } from '@app/common/types/profile';
 import { USER_PACKAGE_NAME } from '@app/common/types/user';
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -23,7 +22,7 @@ const GrpcClients = ClientsModule.register([
     transport: Transport.GRPC,
     options: {
       url: process.env.USER_URL || '127.0.0.1:5000',
-      package: [USER_PACKAGE_NAME, PROFILE_PACKAGE_NAME],
+      package: [USER_PACKAGE_NAME],
       protoPath: [
         join(__dirname, '../user/user.proto'),
         join(__dirname, '../user/profile.proto'),

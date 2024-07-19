@@ -15,6 +15,7 @@ import { LikeModule } from './like/like.module';
 import { PostModule } from './post/post.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserModule } from './user/user.module';
       rootPath: join(__dirname, '../local/media'),
       serveRoot: '/local/media',
     }),
+    TagModule,
   ],
   controllers: [AppController],
   providers: [
