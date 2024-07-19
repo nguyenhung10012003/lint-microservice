@@ -12,13 +12,11 @@ import { CommentModule } from './comment/comment.module';
 import { FeedModule } from './feed/feed.module';
 import { FollowingModule } from './following/following.module';
 import { LikeModule } from './like/like.module';
+import { NotificationModule } from './notification/notification.module';
 import { PostModule } from './post/post.module';
 import { ProfileModule } from './profile/profile.module';
+import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
-
-import { CommentModule } from './comment/comment.module';
-import { NotificationModule } from './notification/notification.module';
-
 
 @Module({
   imports: [

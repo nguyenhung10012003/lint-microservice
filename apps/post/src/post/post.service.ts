@@ -111,7 +111,6 @@ export class PostService {
   }
 
   async findOne(where: Prisma.PostWhereUniqueInput) {
-
     const post = await this.prisma.post.findUnique({
       where,
       include: { medias: true, tags: true },
@@ -130,16 +129,13 @@ export class PostService {
           createdAt: tag.createdAt.toISOString(),
         };
       }),
-    }
-
-    return {
-      ...post,
       scope:
         post.scope === $Enums.PostScope.PUBLIC
           ? PostScope.PUBLIC
           : PostScope.PRIVATE,
-      createdAt: post.createdAt?.toISOString(),
-      updatedAt: post.updatedAt?.toISOString(),
+
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
     };
   }
 }
