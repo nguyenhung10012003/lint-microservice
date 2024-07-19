@@ -14,8 +14,8 @@ model Notification {
   postId        String?
   userId        String
   content       Json
-  diObject      Json?
-  subject       Json 
+  diObject      Obj?
+  subjects      Obj[] 
   subjectCount  Int
   url           String
   read          Boolean
@@ -25,3 +25,8 @@ model Notification {
   @@unique([type, postId, userId])
 }
 
+type Obj {
+  id            String
+  name          String?
+  imageUrl      String?
+}

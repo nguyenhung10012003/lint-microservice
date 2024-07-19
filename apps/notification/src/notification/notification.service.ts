@@ -133,10 +133,10 @@ export class NotificationService implements OnModuleInit {
       });
     }
 
-    let updateSubject = true; // not add subject or increase subject count if subject is the same
+    let updateSubject = true; // only add subject or increase subject count if subject is not exist
     if (notification) {
       for (const subject of notification.subjects) {
-        if (subject === JSON.stringify(upsertDto.subject)) {
+        if (subject.id === upsertDto.subject.id) {
           updateSubject = false;
         }
       }
@@ -151,25 +151,22 @@ export class NotificationService implements OnModuleInit {
       upsertDto.type,
       upsertDto.diObject.name,
     );
-    console.log('content 1: ', content);
 
     const data = {
       type: upsertDto.type.toString(),
       postId: upsertDto.postId,
-      diObject: JSON.stringify(upsertDto.diObject),
+      diObject: upsertDto.diObject,
       userId: upsertDto.userId,
       content: JSON.stringify(content),
       subjects: notification
         ? updateSubject
-          ? [...notification.subjects, JSON.stringify(upsertDto.subject)]
+          ? [...notification.subjects, upsertDto.subject]
           : notification.subjects
-        : [JSON.stringify(upsertDto.subject)],
+        : [upsertDto.subject],
       subjectCount: subjectCount,
       url: upsertDto.url,
       read: false,
     };
-    console.log('content 2: ', data.content);
-    console.log('content 3: ', JSON.parse(data.content));
 
     let upsertNoti = null;
     let notificationType = ''; // update or create
@@ -256,10 +253,8 @@ export class NotificationService implements OnModuleInit {
           id: notification.id,
           userId: notification.userId,
           content: JSON.parse(notification.content.toString()),
-          diObject: JSON.parse(notification.diObject.toString()),
-          subject: JSON.parse(
-            notification.subjects[notification.subjects.length - 1].toString(),
-          ),
+          diObject: notification.diObject,
+          subject: notification.subjects[notification.subjects.length - 1],
           url: notification.url,
           read: notification.read,
           createdAt: notification.createdAt.toISOString(),
