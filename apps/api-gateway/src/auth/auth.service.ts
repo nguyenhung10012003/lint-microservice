@@ -4,6 +4,7 @@ import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientGrpc } from '@nestjs/microservices';
 import { MicroService } from '../grpc-client/microservice';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -22,7 +23,8 @@ export class AuthService implements OnModuleInit {
   }
 
   async signup(data: { email: string; password: string }) {
-    return this.userClient.create(data);
+    await lastValueFrom(this.userClient.create(data));
+    return this.signin(data);
   }
 
   async signin(data: { email: string; password: string }) {

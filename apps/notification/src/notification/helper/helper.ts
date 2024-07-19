@@ -16,7 +16,7 @@ const templates = {
   comment: Handlebars.compile(
     '{{ subjectName }}{{#if (gt subjectCount 1) }} và {{ subtract subjectCount 1 }} người khác{{/if}} đã bình luận về bài viết của bạn: "{{ diContent }}"',
   ),
-  follow: Handlebars.compile('{{ subjectName }} gửi yêu cầu theo dõi bạn'),
+  follow: Handlebars.compile('{{ subjectName }} đã theo dõi bạn'),
 };
 
 export const generateNotificationContent = (

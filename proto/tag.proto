@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package post;
+import "query.proto";
 
 service TagService {
   rpc create(TagDto) returns (Tag) {}
@@ -25,12 +26,13 @@ message Tags {
 }
 
 message TagWhere {
-  optional int32 id = 1;
-  optional string name = 2;
+  optional IntFilter id = 1;
+  optional StringFilter name = 2;
 }
 
 message TagWhereUnique {
-  optional int32 id = 1;
+  int32 id = 1;
+  optional string name = 2;
 }
 
 message TagFindParams {

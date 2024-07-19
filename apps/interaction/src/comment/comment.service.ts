@@ -23,7 +23,7 @@ export class CommentService {
       diId: newComment.id,
       diName: newComment.content,
     };
-    console.log(payload);
+
     await this.producerService.produce({
       topic: 'notification',
       messages: [

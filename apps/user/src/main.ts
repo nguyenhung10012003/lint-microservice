@@ -1,4 +1,3 @@
-import { PROFILE_PACKAGE_NAME } from '@app/common/types/profile';
 import { USER_PACKAGE_NAME } from '@app/common/types/user';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
@@ -11,7 +10,7 @@ async function bootstrap() {
     {
       transport: Transport.GRPC,
       options: {
-        package: [USER_PACKAGE_NAME, PROFILE_PACKAGE_NAME],
+        package: [USER_PACKAGE_NAME],
         protoPath: [
           join(__dirname, '../user.proto'),
           join(__dirname, '../profile.proto'),

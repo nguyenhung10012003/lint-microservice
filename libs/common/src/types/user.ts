@@ -8,14 +8,9 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { ProfileMessage } from "./profile";
+import { SortOrder, StringFilter } from "./query";
 
 export const protobufPackage = "user";
-
-export enum Order {
-  ASC = 0,
-  DESC = 1,
-  UNRECOGNIZED = -1,
-}
 
 export interface UserId {
   id: string;
@@ -26,8 +21,8 @@ export interface UserMessage {
   email: string;
   password: string;
   profile?: ProfileMessage | undefined;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateUserDto {
@@ -57,8 +52,8 @@ export interface FindOneParams {
   id?: string | undefined;
   email?: string | undefined;
   password?: string | undefined;
-  createdAt?: NumberFilter | undefined;
-  updatedAt?: NumberFilter | undefined;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
 }
 
 export interface UserSelect {
@@ -71,38 +66,20 @@ export interface UserSelect {
 }
 
 export interface UserOrderBy {
-  email?: Order | undefined;
-  password?: Order | undefined;
-  createdAt?: Order | undefined;
-  updatedAt?: Order | undefined;
+  email?: SortOrder | undefined;
+  password?: SortOrder | undefined;
+  createdAt?: SortOrder | undefined;
+  updatedAt?: SortOrder | undefined;
 }
 
 export interface UserWhere {
   id?: StringFilter | undefined;
   email?: StringFilter | undefined;
   password?: StringFilter | undefined;
-  createdAt?: NumberFilter | undefined;
-  updatedAt?: NumberFilter | undefined;
+  createdAt?: StringFilter | undefined;
+  updatedAt?: StringFilter | undefined;
   AND: UserWhere[];
   OR: UserWhere[];
-}
-
-export interface StringFilter {
-  equals?: string | undefined;
-  ne?: string | undefined;
-  in: string[];
-  notIn: string[];
-  search?: string | undefined;
-  contains?: string | undefined;
-}
-
-export interface NumberFilter {
-  eq?: number | undefined;
-  ne?: number | undefined;
-  gt?: number | undefined;
-  gte?: number | undefined;
-  lt?: number | undefined;
-  lte?: number | undefined;
 }
 
 export const USER_PACKAGE_NAME = "user";

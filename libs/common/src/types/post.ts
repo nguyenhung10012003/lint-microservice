@@ -8,6 +8,7 @@
 import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { Media, MediaDto } from './media';
+import { DateTimeFilter, SortOrder, StringFilter } from './query';
 import { Tag, TagDto } from './tag';
 
 export const protobufPackage = 'post';
@@ -23,8 +24,8 @@ export interface PostDto {
   content?: string | undefined;
   views?: number | undefined;
   share?: number | undefined;
-  medias?: MediaDto[];
-  tags?: TagDto[];
+  medias: MediaDto[];
+  tags: TagDto[];
   sourceId?: string | undefined;
   scope?: PostScope | undefined;
 }
@@ -49,8 +50,9 @@ export interface Posts {
 }
 
 export interface PostWhere {
-  id?: string | undefined;
-  userId?: string | undefined;
+  id?: StringFilter | undefined;
+  userId?: StringFilter | undefined;
+  createdAt?: DateTimeFilter | undefined;
 }
 
 export interface PostWhereUnique {
@@ -62,8 +64,23 @@ export interface PostFindParams {
   where?: PostWhere | undefined;
   skip?: number | undefined;
   take?: number | undefined;
-  orderBy?: string | undefined;
+  orderBy?: PostOrderBy | undefined;
   select?: PostSelect | undefined;
+}
+
+export interface PostOrderBy {
+  id?: SortOrder | undefined;
+  userId?: SortOrder | undefined;
+  content?: SortOrder | undefined;
+  views?: SortOrder | undefined;
+  share?: SortOrder | undefined;
+  medias?: SortOrder | undefined;
+  tags?: SortOrder | undefined;
+  sourceId?: SortOrder | undefined;
+  scope?: SortOrder | undefined;
+  sourcePost?: SortOrder | undefined;
+  createdAt?: SortOrder | undefined;
+  updatedAt?: SortOrder | undefined;
 }
 
 export interface PostSelect {

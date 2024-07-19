@@ -181,7 +181,7 @@ export class NotificationService implements OnModuleInit {
         },
       });
     } else {
-      notificationType = 'create';
+      notificationType = 'new';
       upsertNoti = await this.prismaService.notification.create({
         data: data,
       });
