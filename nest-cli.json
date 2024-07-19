@@ -102,6 +102,20 @@
         ],
         "watchAssets": true
       }
+    },
+    "notification": {
+      "type": "application",
+      "root": "apps/notification",
+      "entryFile": "src/main",
+      "sourceRoot": "./",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification/tsconfig.app.json",
+        "assets": [
+          "certificate/*.pem",
+          "proto/*.proto"
+        ],
+        "watchAssets": true
+      }
     }
   }
 }
