@@ -136,6 +136,6 @@ export class PostService {
 
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
-    };
+    }
   }
 }

@@ -12,9 +12,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
+import { AwsS3Service } from '../s3/aws-s3.service';
 import { ManyQuery } from '../types/query';
 import { fileAcceptReg } from '../utils/file-accept';
 import { PostDto } from './model/post.dto';
@@ -24,19 +23,14 @@ import { PostService } from './post.service';
 @Controller('post')
 @UseGuards(AccessTokenGuard)
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly s3Service: AwsS3Service,
+  ) {}
 
   @Post()
   @UseInterceptors(
     FilesInterceptor('medias', 10, {
-      storage: diskStorage({
-        destination: './local/media',
-        filename: (req, file, cb) => {
-          const filename: string = uuidv4();
-          const extension: string = file.mimetype.split('/')[1];
-          cb(null, `${filename}.${extension}`);
-        },
-      }),
       fileFilter: (req, file, cb) => {
         if (file) {
           if (!fileAcceptReg.test(file.mimetype))
@@ -56,11 +50,12 @@ export class PostController {
     @UploadedFiles()
     files?: Express.Multer.File[],
   ) {
+    const urls = await this.s3Service.uploadFiles(files);
     return this.postService.create({
       ...post,
       userId: req.user.userId,
-      medias: files?.map((file) => ({
-        url: file.path,
+      medias: urls?.map((url) => ({
+        url: url,
         type: MediaType.IMAGE,
       })),
       tags: post.tags?.map((tag) => ({ name: tag })),
