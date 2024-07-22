@@ -50,13 +50,16 @@ export class ProfileController {
         .addFileTypeValidator({
           fileType: imageAcceptReg,
         })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
+        }),
     )
     file: Express.Multer.File,
   ) {
     return this.profileService.create({
       ...createProfileDto,
-      avatar: file.path,
+      avatar: file?.path,
       userId: req.user.userId,
     });
   }

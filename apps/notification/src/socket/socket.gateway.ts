@@ -22,6 +22,7 @@ export class SocketGateway
   }
 
   async handleConnection(client: Socket) {
+    console.log('Client connecting... ');
     const authHeader = client.handshake.headers.authorization;
 
     if (!authHeader) {

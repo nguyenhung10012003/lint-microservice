@@ -72,6 +72,7 @@ export class ProfileController implements ProfileServiceController {
       },
     });
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   delete(request: Id): Empty | Promise<Empty> | Observable<Empty> {
     return null;
   }
