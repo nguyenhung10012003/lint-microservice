@@ -16,10 +16,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
-import { diskStorage } from 'multer';
 import { GrpcToHttpInterceptor } from 'nestjs-grpc-exceptions';
-import { v4 as uuidv4 } from 'uuid';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
+import { AwsS3Service } from '../s3/aws-s3.service';
 import { imageAcceptReg } from '../utils/file-accept';
 import { ProfileService } from './profile.service';
 
@@ -27,22 +26,14 @@ import { ProfileService } from './profile.service';
 @UseInterceptors(GrpcToHttpInterceptor)
 @UseGuards(AccessTokenGuard)
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(
+    private readonly profileService: ProfileService,
+    private readonly s3Service: AwsS3Service,
+  ) {}
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: './local/media',
-        filename: (req, file, cb) => {
-          const filename: string = uuidv4();
-          const extension: string = file.mimetype.split('/')[1];
-          cb(null, `${filename}.${extension}`);
-        },
-      }),
-    }),
-  )
-  create(
+  @UseInterceptors(FileInterceptor('avatar'))
+  async create(
     @Req() req,
     @Body() createProfileDto: ProfileDto,
     @UploadedFile(
@@ -50,13 +41,17 @@ export class ProfileController {
         .addFileTypeValidator({
           fileType: imageAcceptReg,
         })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
+        }),
     )
     file: Express.Multer.File,
   ) {
+    const url = await this.s3Service.uploadFile(file);
     return this.profileService.create({
       ...createProfileDto,
-      avatar: file.path,
+      avatar: url,
       userId: req.user.userId,
     });
   }
@@ -74,14 +69,6 @@ export class ProfileController {
   @Patch()
   @UseInterceptors(
     FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: './local/media',
-        filename: (req, file, cb) => {
-          const filename: string = uuidv4();
-          const extension: string = file.mimetype.split('/')[1];
-          cb(null, `${filename}.${extension}`);
-        },
-      }),
       fileFilter: (req, file, cb) => {
         if (!file) {
           cb(null, false);
@@ -97,19 +84,20 @@ export class ProfileController {
       },
     }),
   )
-  update(
+  async update(
     @Req() req: any,
     @Body() updateProfileDto: ProfileDto & { id: string },
     @UploadedFile()
     file?: Express.Multer.File,
   ) {
+    const url = file && (await this.s3Service.uploadFile(file));
     return this.profileService.update(updateProfileDto.id, {
       name: updateProfileDto.name,
       alias: updateProfileDto.alias,
       bio: updateProfileDto.bio,
       country: updateProfileDto.country,
       dob: updateProfileDto.dob,
-      avatar: process.env.API_URL + '/' + file?.path,
+      avatar: url,
       gender: updateProfileDto.gender,
       userId: req.user.userId,
     });

@@ -50,4 +50,12 @@ export class LikeController {
       postId: query.postId + '',
     });
   }
+
+  @Get('exist')
+  exists(@Req() req: any, @Query() query: { userId: string; postId: string }) {
+    return this.likeService.exists({
+      userId: req.user.userId,
+      postId: query.postId,
+    });
+  }
 }

@@ -27,4 +27,8 @@ export class UserService implements OnModuleInit {
   async create(data: { email: string; password: string }) {
     return this.userService.create(data);
   }
+
+  async search(params: { key: string; skip: number; take: number }) {
+    return this.userService.search(params);
+  }
 }

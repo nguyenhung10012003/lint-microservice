@@ -8,6 +8,7 @@
 import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { Count } from './count';
+import { SortOrder } from './query';
 
 export const protobufPackage = 'interaction';
 
@@ -63,6 +64,16 @@ export interface CommentParams {
   take?: number | undefined;
   skip?: number | undefined;
   select?: CommentSelect | undefined;
+  orderBy?: CommentOrderBy | undefined;
+}
+
+export interface CommentOrderBy {
+  id?: SortOrder | undefined;
+  userId?: SortOrder | undefined;
+  postId?: SortOrder | undefined;
+  content?: SortOrder | undefined;
+  createdAt?: SortOrder | undefined;
+  updatedAt?: SortOrder | undefined;
 }
 
 export interface CommentId {
@@ -117,6 +128,16 @@ export interface ReplyParams {
   take?: number | undefined;
   skip?: number | undefined;
   select?: ReplySelect | undefined;
+  orderBy?: ReplyOrderBy | undefined;
+}
+
+export interface ReplyOrderBy {
+  id?: SortOrder | undefined;
+  userId?: SortOrder | undefined;
+  commentId?: SortOrder | undefined;
+  content?: SortOrder | undefined;
+  createdAt?: SortOrder | undefined;
+  updatedAt?: SortOrder | undefined;
 }
 
 export interface ReplyId {

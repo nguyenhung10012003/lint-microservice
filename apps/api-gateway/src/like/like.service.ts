@@ -37,4 +37,8 @@ export class LikeService implements OnModuleInit {
   async count(where: LikeWhere) {
     return this.likeClient.count(where);
   }
+
+  exists(params: { userId: string; postId: string }) {
+    return this.likeClient.exists(params);
+  }
 }

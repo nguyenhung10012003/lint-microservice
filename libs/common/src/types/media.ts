@@ -5,10 +5,10 @@
 // source: media.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
-export const protobufPackage = "post";
+export const protobufPackage = 'post';
 
 export enum MediaType {
   IMAGE = 0,
@@ -67,7 +67,7 @@ export interface MediaSelect {
   duration?: boolean | undefined;
 }
 
-export const POST_PACKAGE_NAME = "post";
+export const POST_PACKAGE_NAME = 'post';
 
 export interface MediaServiceClient {
   create(request: MediaDto): Observable<Media>;
@@ -88,24 +88,46 @@ export interface MediaServiceController {
 
   find(request: MediaFindParams): Promise<Medias> | Observable<Medias> | Medias;
 
-  findOne(request: MediaWhereUnique): Promise<Media> | Observable<Media> | Media;
+  findOne(
+    request: MediaWhereUnique,
+  ): Promise<Media> | Observable<Media> | Media;
 
   delete(request: MediaWhereUnique): Promise<Media> | Observable<Media> | Media;
 }
 
 export function MediaServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "update", "find", "findOne", "delete"];
+    const grpcMethods: string[] = [
+      'create',
+      'update',
+      'find',
+      'findOne',
+      'delete',
+    ];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("MediaService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcMethod('MediaService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("MediaService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcStreamMethod('MediaService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
   };
 }
 
-export const MEDIA_SERVICE_NAME = "MediaService";
+export const MEDIA_SERVICE_NAME = 'MediaService';

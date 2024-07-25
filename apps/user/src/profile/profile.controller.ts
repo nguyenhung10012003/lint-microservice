@@ -11,7 +11,8 @@ import {
 } from '@app/common/types/profile';
 import { Controller, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ErrorInterceptor } from '../interceptors/error.interceptor';
+
+import { ErrorInterceptor } from '@app/common/interceptors/error.interceptor';
 import ProfileBuilder from './model/profile.builder';
 import { ProfileService } from './profile.service';
 

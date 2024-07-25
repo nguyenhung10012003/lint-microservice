@@ -1,3 +1,4 @@
+import { SearchParams } from '@app/common/types/query';
 import {
   CreateUserDto,
   FindAllParams,
@@ -19,6 +20,7 @@ import { UserService } from './user.service';
 @UseInterceptors(ErrorInterceptor)
 export class UserController implements UserServiceController {
   constructor(private readonly userService: UserService) {}
+
   findAll(
     request: FindAllParams,
   ): UsersMessage | Promise<UsersMessage> | Observable<UsersMessage> {
@@ -44,11 +46,14 @@ export class UserController implements UserServiceController {
   findOne(
     request: FindOneParams,
   ): UserMessage | Promise<UserMessage> | Observable<UserMessage> {
-    return this.userService.findOne({
-      email: request.email,
-      password: request.password,
-      id: request.id,
-    });
+    return this.userService.findOne(
+      {
+        email: request.email,
+        password: request.password,
+        id: request.id,
+      },
+      { profile: true },
+    );
   }
 
   findById(
@@ -74,5 +79,9 @@ export class UserController implements UserServiceController {
     request: UserId,
   ): UserMessage | Observable<UserMessage> | Promise<UserMessage> {
     throw new Error('Method not implemented.');
+  }
+
+  search(request: SearchParams) {
+    return this.userService.search(request);
   }
 }

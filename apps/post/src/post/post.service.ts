@@ -66,7 +66,6 @@ export class PostService {
     skip?: number;
     take?: number;
     where?: Prisma.PostWhereInput;
-
     select?: Prisma.PostSelect;
     orderBy?: Prisma.PostOrderByWithAggregationInput;
   }) {
@@ -87,13 +86,13 @@ export class PostService {
                 updatedAt: post.sourcePost.updatedAt?.toISOString(),
               }
             : undefined,
-          medias: post.medias.map((media) => {
+          medias: post.medias?.map((media) => {
             return {
               ...media,
               type: MediaType[media.type as keyof typeof MediaType],
             };
           }),
-          tags: post.tags.map((tag) => {
+          tags: post.tags?.map((tag) => {
             return {
               ...tag,
               createdAt: tag.createdAt.toISOString(),
@@ -115,15 +114,16 @@ export class PostService {
       where,
       include: { medias: true, tags: true },
     });
+    if (!post) return null;
     return {
       ...post,
-      medias: post.medias.map((media) => {
+      medias: post.medias?.map((media) => {
         return {
           ...media,
           type: MediaType[media.type as keyof typeof MediaType],
         };
       }),
-      tags: post.tags.map((tag) => {
+      tags: post.tags?.map((tag) => {
         return {
           ...tag,
           createdAt: tag.createdAt.toISOString(),
@@ -136,6 +136,54 @@ export class PostService {
 
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
+    };
+  }
+
+  async search(params: {
+    key?: string;
+    skip?: number;
+    take?: number;
+    tags?: string[];
+  }) {
+    const posts = await this.prisma.post.findMany({
+      where: {
+        content: params.key && { contains: params.key },
+        tags: {
+          some: {
+            name: {
+              in: params.tags,
+            },
+          },
+        },
+      },
+      skip: params.skip,
+      take: params.take,
+      include: { medias: true, tags: true },
+    });
+    return {
+      posts: posts.map((post) => {
+        return {
+          ...post,
+          medias: post.medias?.map((media) => {
+            return {
+              ...media,
+              type: MediaType[media.type as keyof typeof MediaType],
+            };
+          }),
+          tags: post.tags?.map((tag) => {
+            return {
+              ...tag,
+              createdAt: tag.createdAt.toISOString(),
+            };
+          }),
+          scope:
+            post.scope === $Enums.PostScope.PUBLIC
+              ? PostScope.PUBLIC
+              : PostScope.PRIVATE,
+          createdAt: post.createdAt?.toISOString(),
+          updatedAt: post.updatedAt?.toISOString(),
+        };
+      }),
     };
   }
 }

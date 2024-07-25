@@ -13,6 +13,8 @@ model Like {
   userId    String
   postId    String
   createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
 }
 
 model Comment {

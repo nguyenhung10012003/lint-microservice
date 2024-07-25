@@ -10,12 +10,12 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
-import { ManyQuery } from '../types/query';
+import { ParseTagsPipe } from '../lib/pipes/parse-tags.pipe';
+import { AwsS3Service } from '../s3/aws-s3.service';
 import { fileAcceptReg } from '../utils/file-accept';
 import { PostDto } from './model/post.dto';
 import { PostQuery } from './model/post.query';
@@ -24,19 +24,14 @@ import { PostService } from './post.service';
 @Controller('post')
 @UseGuards(AccessTokenGuard)
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly s3Service: AwsS3Service,
+  ) {}
 
   @Post()
   @UseInterceptors(
     FilesInterceptor('medias', 10, {
-      storage: diskStorage({
-        destination: './local/media',
-        filename: (req, file, cb) => {
-          const filename: string = uuidv4();
-          const extension: string = file.mimetype.split('/')[1];
-          cb(null, `${filename}.${extension}`);
-        },
-      }),
       fileFilter: (req, file, cb) => {
         if (file) {
           if (!fileAcceptReg.test(file.mimetype))
@@ -50,17 +45,19 @@ export class PostController {
       },
     }),
   )
+  @UsePipes(ParseTagsPipe)
   async create(
     @Req() req: any,
     @Body() post: PostDto,
     @UploadedFiles()
     files?: Express.Multer.File[],
   ) {
+    const urls = await this.s3Service.uploadFiles(files);
     return this.postService.create({
       ...post,
       userId: req.user.userId,
-      medias: files?.map((file) => ({
-        url: file.path,
+      medias: urls?.map((url) => ({
+        url: url,
         type: MediaType.IMAGE,
       })),
       tags: post.tags?.map((tag) => ({ name: tag })),
@@ -68,8 +65,34 @@ export class PostController {
   }
 
   @Get()
-  async find(@Query() query: ManyQuery) {
-    const postQuery = new PostQuery(query.select, query.skip, query.take);
+  async find(
+    @Query()
+    query: PostQuery,
+  ) {
+    const postQuery = new PostQuery({
+      select: query.select,
+      skip: query.skip,
+      take: query.take,
+      orderField: query.orderField,
+      orderDirection: query.orderDirection,
+      userId: query.userId,
+    });
+
     return this.postService.findMany(postQuery.extract());
+  }
+
+  @Get('search')
+  async search(
+    @Query('key') key: string,
+    @Query('skip') skip: number,
+    @Query('take') take: number,
+    @Query('tags') tags: string[],
+  ) {
+    return this.postService.search({
+      key,
+      skip,
+      take,
+      tags: tags && [].concat(tags),
+    });
   }
 }
