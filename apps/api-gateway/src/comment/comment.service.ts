@@ -7,62 +7,24 @@ import {
   CommentWhere,
   CommentWhereUnique,
 } from '@app/common/types/comment';
-import {
-  NOTIFICATION_SERVICE_NAME,
-  NotificationServiceClient,
-} from '@app/common/types/notification';
-import { POST_SERVICE_NAME, PostServiceClient } from '@app/common/types/post';
-import { USER_SERVICE_NAME, UserServiceClient } from '@app/common/types/user';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+
 import { MicroService } from '../grpc-client/microservice';
 
 @Injectable()
 export class CommentService implements OnModuleInit {
   private commentService: CommentServiceClient;
-  private notificationService: NotificationServiceClient;
-  private postService: PostServiceClient;
-  private userService: UserServiceClient;
   constructor(
     @Inject(MicroService.INTERACTION_SERVICE)
     private readonly client: ClientGrpc,
-    @Inject(MicroService.NOTIFICATION_SERVICE)
-    private readonly notificationClient: ClientGrpc,
-    @Inject(MicroService.POST_SERVICE)
-    private readonly postClient: ClientGrpc,
-    @Inject(MicroService.USER_SERVICE)
-    private readonly userClient: ClientGrpc,
   ) {}
   onModuleInit() {
     this.commentService =
       this.client.getService<CommentServiceClient>(COMMENT_SERVICE_NAME);
-    this.notificationService =
-      this.notificationClient.getService<NotificationServiceClient>(
-        NOTIFICATION_SERVICE_NAME,
-      );
-    this.postService =
-      this.postClient.getService<PostServiceClient>(POST_SERVICE_NAME);
-    this.userService =
-      this.userClient.getService<UserServiceClient>(USER_SERVICE_NAME);
   }
 
   async create(comment: CommentDto) {
-    const post = await firstValueFrom(
-      this.postService.findOne({ id: comment.postId }),
-    );
-    if (!post) {
-      throw new Error('Post not found');
-    }
-
-    const postOwnerId = post.userId;
-    const notification = {
-      interactorId: comment.userId,
-      postId: comment.postId,
-      userId: postOwnerId,
-      content: 'new comment',
-    };
-    await firstValueFrom(this.notificationService.create(notification));
     return this.commentService.create(comment);
   }
 

@@ -6,6 +6,8 @@ import {
   ProfileServiceController,
   ProfileServiceControllerMethods,
   ProfilesMessage,
+  ResponseProfile,
+  UserIdDto,
 } from '@app/common/types/profile';
 import { Controller, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -30,10 +32,17 @@ export class ProfileController implements ProfileServiceController {
   ): ProfilesMessage | Promise<ProfilesMessage> | Observable<ProfilesMessage> {
     return this.profileService.findAll(request);
   }
+
   findById(
     request: Id,
   ): ProfileMessage | Promise<ProfileMessage> | Observable<ProfileMessage> {
     return this.profileService.findById(request.id);
+  }
+
+  findOne(
+    request: UserIdDto,
+  ): ResponseProfile | Promise<ResponseProfile> | Observable<ResponseProfile> {
+    return this.profileService.findOne(request.userId);
   }
   create(
     request: ProfileDto,
@@ -50,6 +59,7 @@ export class ProfileController implements ProfileServiceController {
         .build(),
     );
   }
+
   update(
     request: ProfileDto,
   ): ProfileMessage | Promise<ProfileMessage> | Observable<ProfileMessage> {

@@ -5,20 +5,20 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.GRPC,
-      options: {
-        url: process.env.INTERACTION_URL,
-        package: INTERACTION_PACKAGE_NAME,
-        protoPath: [
-          join(__dirname, '../like.proto'),
-          join(__dirname, '../comment.proto'),
-        ],
-      },
+  const app = await NestFactory.create(AppModule);
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      url: process.env.INTERACTION_URL,
+      package: INTERACTION_PACKAGE_NAME,
+      protoPath: [
+        join(__dirname, '../like.proto'),
+        join(__dirname, '../comment.proto'),
+      ],
     },
-  );
-  await app.listen();
+  });
+
+  await app.startAllMicroservices();
 }
 bootstrap();

@@ -7,6 +7,7 @@ service ProfileService {
   rpc findAll(Empty) returns (ProfilesMessage);
   rpc findById(Id) returns (ProfileMessage);
   rpc findByUserId(Id) returns (ProfileMessage);
+  rpc findOne(UserIdDto) returns (ResponseProfile);
   rpc create(ProfileDto) returns (ProfileMessage);
   rpc update(ProfileDto) returns (ProfileMessage);
   rpc delete(Id) returns (Empty);
@@ -31,6 +32,10 @@ message Id {
   string id = 1;
 }
 
+message UserIdDto {
+  string userId = 1;
+}
+
 message ProfileDto {
   optional string name = 1;
   optional string avatar = 2;
@@ -40,6 +45,12 @@ message ProfileDto {
   optional string gender = 6;
   optional string alias = 7;
   string userId = 8;
+}
+
+message ResponseProfile {
+  string id = 1;
+  string name = 2;
+  string avatar = 3;
 }
 
 

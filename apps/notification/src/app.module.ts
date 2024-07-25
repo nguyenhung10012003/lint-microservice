@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { NotificationModule } from './notification/notification.module';
 import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { KafkaModule } from './kafka/kafka.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     NotificationModule,
     CommonModule,
     SocketModule,
+    KafkaModule,
   ],
   controllers: [],
   providers: [grpcProvider],

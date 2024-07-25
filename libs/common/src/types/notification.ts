@@ -10,27 +10,55 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "notification";
 
-export interface CreateNotificationDto {
-  postId?: string | undefined;
-  interactorId: string;
-  userId: string;
-  content: string;
+export enum NotificationType {
+  OTHER = 0,
+  LIKE = 1,
+  COMMENT = 2,
+  FOLLOW = 3,
+  UNRECOGNIZED = -1,
 }
 
-export interface UpdateNotificationDto {
+export interface UpsertNotificationDto {
+  type: NotificationType;
+  diObject?: Obj | undefined;
+  subject: Obj | undefined;
+  userId?: string | undefined;
+  postId?: string | undefined;
+  url: string;
+}
+
+export interface UpdateStatusDto {
   id: string;
+  userId?: string | undefined;
   read: boolean;
 }
 
 export interface Notification {
   id: string;
-  postId?: string | undefined;
-  interactorId: string;
   userId: string;
-  content: string;
+  diObject?: Obj | undefined;
+  subject: Obj | undefined;
+  url: string;
+  content: Content | undefined;
   read: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Obj {
+  id: string;
+  name?: string | undefined;
+  imageUrl?: string | undefined;
+}
+
+export interface Content {
+  text: string;
+  highlights: Highlight[];
+}
+
+export interface Highlight {
+  length: number;
+  offset: number;
 }
 
 export interface Notifications {
@@ -39,6 +67,7 @@ export interface Notifications {
 
 export interface NotificationWhereUnique {
   id: string;
+  userId?: string | undefined;
 }
 
 export interface NotificationWhere {
@@ -58,32 +87,24 @@ export interface Empty {
 export const NOTIFICATION_PACKAGE_NAME = "notification";
 
 export interface NotificationServiceClient {
-  create(request: CreateNotificationDto): Observable<Notification>;
-
-  update(request: UpdateNotificationDto): Observable<Notification>;
+  updateStatus(request: UpdateStatusDto): Observable<Empty>;
 
   findMany(request: NotificationFindParams): Observable<Notifications>;
 
   delete(request: NotificationWhereUnique): Observable<Empty>;
-
-  findOne(request: NotificationWhereUnique): Observable<Notification>;
 }
 
 export interface NotificationServiceController {
-  create(request: CreateNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
-
-  update(request: UpdateNotificationDto): Promise<Notification> | Observable<Notification> | Notification;
+  updateStatus(request: UpdateStatusDto): Promise<Empty> | Observable<Empty> | Empty;
 
   findMany(request: NotificationFindParams): Promise<Notifications> | Observable<Notifications> | Notifications;
 
   delete(request: NotificationWhereUnique): Promise<Empty> | Observable<Empty> | Empty;
-
-  findOne(request: NotificationWhereUnique): Promise<Notification> | Observable<Notification> | Notification;
 }
 
 export function NotificationServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "update", "findMany", "delete", "findOne"];
+    const grpcMethods: string[] = ["updateStatus", "findMany", "delete"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("NotificationService", method)(constructor.prototype[method], method, descriptor);

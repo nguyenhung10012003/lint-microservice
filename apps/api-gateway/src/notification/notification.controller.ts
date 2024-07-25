@@ -7,13 +7,11 @@ import {
   Get,
   Request,
   Delete,
-  Post,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import {
-  CreateNotificationDto,
   NotificationWhereUnique,
-  UpdateNotificationDto,
+  UpdateStatusDto,
 } from '@app/common/types/notification';
 import { ManyQuery } from '../types/query';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
@@ -36,20 +34,20 @@ export class NotificationController {
     });
   }
 
-  @Post()
-  async create(@Body() createDto: CreateNotificationDto) {
-    return await this.notificationService.create(createDto);
-  }
-
   @Patch()
-  async update(@Request() request, @Body() updateDto: UpdateNotificationDto) {
+  async updateStatus(
+    @Request() request,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ) {
     const userId = request.user.userId;
-    return await this.notificationService.update(updateDto, userId);
+    updateStatusDto.userId = userId;
+    return await this.notificationService.updateStatus(updateStatusDto);
   }
 
   @Delete()
   async delete(@Request() request, @Body() where: NotificationWhereUnique) {
     const userId = request.user.userId;
-    await this.notificationService.delete(where, userId);
+    where.userId = userId;
+    await this.notificationService.delete(where);
   }
 }

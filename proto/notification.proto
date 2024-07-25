@@ -3,34 +3,52 @@ syntax = "proto3";
 package notification;
 
 service NotificationService {
-  rpc create(CreateNotificationDto) returns (Notification) {}
-  rpc update(UpdateNotificationDto) returns (Notification) {}
+  rpc updateStatus(UpdateStatusDto) returns (Empty) {}
   rpc findMany(NotificationFindParams) returns (Notifications) {}
   rpc delete(NotificationWhereUnique) returns (Empty) {}
-  rpc findOne(NotificationWhereUnique) returns (Notification) {}
 }
 
-message CreateNotificationDto {
-  optional string postId = 1;
-  string interactorId = 2;
-  string userId = 3;
-  string content = 4;
+message UpsertNotificationDto {
+  NotificationType type = 1;
+  optional Obj diObject = 2;
+  Obj subject = 3;
+  optional string userId = 4;
+  optional string postId = 5;
+  string url = 6;
 }
 
-message UpdateNotificationDto {
+message UpdateStatusDto {
   string id = 1;
-  bool read = 2;
+  optional string userId = 2;
+  bool read = 3;
 }
 
 message Notification {
   string id = 1;
-  optional string postId = 2;
-  string interactorId = 3;
-  string userId = 4;
-  string content = 5;
-  bool read = 6;
-  string createdAt = 7;
-  string updatedAt = 8;
+  string userId = 2;
+  optional Obj diObject = 3; 
+  Obj subject = 4;
+  string url = 5;
+  Content content = 6;
+  bool read = 7;
+  string createdAt = 8;
+  string updatedAt = 9;
+}
+
+message Obj {
+  string id =  1;
+  optional string name = 2;
+  optional string imageUrl = 3;
+}
+
+message Content {
+  string text = 1;
+  repeated Highlight highlights = 2;
+}
+
+message Highlight {
+  int32 length = 1;
+  int32 offset = 2;
 }
 
 message Notifications {
@@ -39,6 +57,7 @@ message Notifications {
 
 message NotificationWhereUnique {
   string id = 1;
+  optional string userId = 2;
 }
 
 message NotificationWhere {
@@ -53,3 +72,10 @@ message NotificationFindParams {
 }
 
 message Empty {}
+
+enum NotificationType {
+  OTHER = 0;
+  LIKE = 1;
+  COMMENT = 2;
+  FOLLOW = 3;
+}

@@ -1,12 +1,10 @@
 import {
   NotificationServiceController,
   NotificationServiceControllerMethods,
-  Notification,
   Notifications,
-  CreateNotificationDto,
-  UpdateNotificationDto,
   NotificationFindParams,
   Empty,
+  UpdateStatusDto,
   NotificationWhereUnique,
 } from '@app/common/types/notification';
 import { Controller } from '@nestjs/common';
@@ -18,31 +16,21 @@ import { Observable } from 'rxjs';
 export class NotificationController implements NotificationServiceController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  create(
-    request: CreateNotificationDto,
-  ): Notification | Promise<Notification> | Observable<Notification> {
-    return this.notificationService.create(request);
-  }
-
-  update(
-    request: UpdateNotificationDto,
-  ): Promise<Notification> | Observable<Notification> | Notification {
-    return this.notificationService.update(request);
-  }
-
   findMany(
-    request: NotificationFindParams,
+    data: NotificationFindParams,
   ): Notifications | Promise<Notifications> | Observable<Notifications> {
-    return this.notificationService.findMany(request);
+    return this.notificationService.findMany(data);
+  }
+
+  updateStatus(
+    data: UpdateStatusDto,
+  ): Empty | Promise<Empty> | Observable<Empty> {
+    return this.notificationService.updateStatus(data);
   }
 
   delete(
-    request: NotificationWhereUnique,
-  ): Promise<Empty> | Observable<Empty> | Empty {
-    return this.notificationService.delete(request);
-  }
-
-  findOne(request: NotificationWhereUnique): Promise<Notification> {
-    return this.notificationService.findOne(request);
+    data: NotificationWhereUnique,
+  ): Empty | Promise<Empty> | Observable<Empty> {
+    return this.notificationService.delete(data);
   }
 }

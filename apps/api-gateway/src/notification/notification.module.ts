@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { NotificationService } from './notification.service';
-import { NotificationController } from './notification.controller';
 import { GrpcClientModule } from '../grpc-client/grpc-client.module';
-
+import { JwtModule } from '@nestjs/jwt';
+import { NotificationController } from './notification.controller';
+import { NotificationService } from './notification.service';
 @Module({
-  imports: [GrpcClientModule],
+  imports: [GrpcClientModule, JwtModule.register({})],
   controllers: [NotificationController],
   providers: [NotificationService],
 })

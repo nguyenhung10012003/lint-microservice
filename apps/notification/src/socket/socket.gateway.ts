@@ -37,7 +37,6 @@ export class SocketGateway
         token,
         process.env.JWT_ACCESS_TOKEN_SECRET,
       ) as JwtPayload;
-      console.log(payload);
     } catch (error) {
       client.disconnect(true);
       return;
@@ -45,8 +44,6 @@ export class SocketGateway
 
     client.data.userId = payload.sub;
     client.join(`user_${payload.sub}`);
-    console.log(client.rooms);
-
     console.log(`Client ${client.id} connected`);
   }
 
@@ -54,11 +51,10 @@ export class SocketGateway
     console.log(`Client ${client.id} disconnected`);
   }
 
-  @OnEvent('send-notification')
-  handleOrderCreatedEvent(notification: Notification) {
-    console.log('new notification');
-    this.server.to(`user_${notification.userId}`).emit('new-notification', {
-      message: 'new notification',
+  @OnEvent('notification')
+  handleCreatedEvent(notification: Notification) {
+    this.server.to(`user_${notification.userId}`).emit('notification', {
+      message: 'notification',
       data: notification,
     });
   }
