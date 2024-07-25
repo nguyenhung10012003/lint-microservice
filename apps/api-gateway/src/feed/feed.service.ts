@@ -56,7 +56,7 @@ export class FeedService implements OnModuleInit {
     return this.postService.find({
       where: {
         userId: {
-          in: followingIds,
+          in: [...followingIds, userId],
         },
       },
       orderBy: {

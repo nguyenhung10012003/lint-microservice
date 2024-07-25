@@ -64,16 +64,15 @@ export const generateNotificationContent = (
 };
 
 export function generateUrl(type: number, id: string) {
-  const appUrl = process.env.APP_URL;
   switch (type) {
     case 1:
-      return appUrl + `/post/${id}`;
+      return `/post/${id}`;
     case 2:
-      return appUrl + `/comment/${id}`;
+      return `/comment/${id}`;
     case 3:
-      return appUrl + `following?following=${id}`;
+      return `following?following=${id}`;
     default:
-      return appUrl;
+      return '';
   }
 }
 

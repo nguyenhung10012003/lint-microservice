@@ -31,6 +31,7 @@ import {
   getFirstWords,
   getNotificationType,
 } from './helper/helper';
+import { MediaType } from '@app/common/types/media';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
@@ -85,34 +86,76 @@ export class NotificationService implements OnModuleInit {
     }
 
     let post: Post;
-
     if (payload.postId) {
       post = await firstValueFrom(
         this.postService.findOne({ id: payload.postId }),
       );
     }
 
-    if (type == NotificationType.LIKE) {
-      payload.diName = post.content;
+    let data: UpsertNotificationDto;
+    switch (type) {
+      case NotificationType.COMMENT:
+        data = {
+          type: type,
+          // comment
+          diObject: {
+            id: payload.diId,
+            name: payload.diName ? getFirstWords(payload.diName, 5) : '',
+          },
+          subject: {
+            id: subject.id,
+            name: subject.name,
+            imageUrl: subject.avatar,
+          },
+          url: generateUrl(type, payload.diId),
+          userId: post.userId,
+          postId: post.id,
+        };
+        break;
+      case NotificationType.LIKE:
+        data = {
+          type: type,
+          // post
+          diObject: {
+            id: post.id,
+            name: post.content ? getFirstWords(post.content, 5) : '',
+            imageUrl: post.medias
+              ? post.medias[0].type === MediaType.IMAGE
+                ? post.medias[0].url
+                : null
+              : null,
+          },
+          subject: {
+            id: subject.id,
+            name: subject.name,
+            imageUrl: subject.avatar,
+          },
+          url: generateUrl(type, post.id),
+          userId: post.userId,
+          postId: post.id,
+        };
+        break;
+      case NotificationType.FOLLOW:
+        data = {
+          type: type,
+          // following
+          diObject: {
+            id: subject.id,
+            name: subject.name,
+            imageUrl: subject.avatar,
+          },
+          // follower
+          subject: {
+            id: subject.id,
+            name: subject.name,
+            imageUrl: subject.avatar,
+          },
+          url: generateUrl(type, subject.id),
+          userId: subject.id,
+          postId: null,
+        };
+        break;
     }
-
-    const data: UpsertNotificationDto = {
-      type: type,
-      diObject: {
-        id: payload.diId,
-        name: payload.diName ? getFirstWords(payload.diName, 5) : '',
-        imageUrl: payload.diUrl ? payload.diUrl : null,
-      },
-      subject: {
-        id: subject.id,
-        name: subject.name,
-        imageUrl: subject.avatar,
-      },
-      url: generateUrl(type, payload.diId),
-      // if post is null, it is a follow/other
-      userId: post ? post.userId : payload.diId,
-      postId: post ? post.id : null,
-    };
     await this.upsert(data);
   }
 
@@ -133,7 +176,8 @@ export class NotificationService implements OnModuleInit {
       });
     }
 
-    let updateSubject = true; // only add subject or increase subject count if subject is not exist
+    // only add subject or increase subject count if subject is not exist
+    let updateSubject = true;
     if (notification) {
       for (const subject of notification.subjects) {
         if (subject.id === upsertDto.subject.id) {
@@ -166,6 +210,7 @@ export class NotificationService implements OnModuleInit {
       subjectCount: subjectCount,
       url: upsertDto.url,
       read: false,
+      lastModified: new Date().toISOString(),
     };
 
     let upsertNoti = null;
@@ -188,12 +233,20 @@ export class NotificationService implements OnModuleInit {
     }
 
     const lastSubject = upsertNoti.subjects[upsertNoti.subjects.length - 1];
+
+    const unreadCount = await this.prismaService.notification.count({
+      where: {
+        userId: upsertDto.userId,
+        read: false,
+      },
+    });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { subjects, subjectCount: _, ...rest } = upsertNoti;
     this.eventEmitter.emit('notification', {
       notificationType,
       ...rest,
       lastSubject,
+      unreadCount,
     });
   }
 
@@ -245,7 +298,13 @@ export class NotificationService implements OnModuleInit {
       },
     });
 
-    console.log(notifications);
+    const totalNotifications = await this.prismaService.notification.count({
+      where: {
+        userId: param.where.userId,
+      },
+    });
+
+    const hasMore = param.skip + param.take < totalNotifications;
 
     return {
       notifications: notifications.map((notification) => {
@@ -257,10 +316,23 @@ export class NotificationService implements OnModuleInit {
           subject: notification.subjects[notification.subjects.length - 1],
           url: notification.url,
           read: notification.read,
-          createdAt: notification.createdAt.toISOString(),
-          updatedAt: notification.updatedAt.toISOString(),
+          lastModified: notification.lastModified.toISOString(),
         };
       }),
+      hasMore: hasMore,
+    };
+  }
+
+  async countUnread(userId: { userId: string }) {
+    const unreadCount = await this.prismaService.notification.count({
+      where: {
+        userId: userId.userId,
+        read: false,
+      },
+    });
+
+    return {
+      count: unreadCount,
     };
   }
 }

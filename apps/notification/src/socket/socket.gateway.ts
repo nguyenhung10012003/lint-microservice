@@ -22,17 +22,15 @@ export class SocketGateway
   }
 
   async handleConnection(client: Socket) {
-    console.log('Client connecting... ');
     const authHeader = client.handshake.headers.authorization;
-
     if (!authHeader) {
       client.disconnect(true);
+      console.log('Unauthorized');
       return;
     }
 
     const token = authHeader.split(' ')[1];
     let payload: JwtPayload;
-
     try {
       payload = jwt.verify(
         token,
@@ -40,6 +38,7 @@ export class SocketGateway
       ) as JwtPayload;
     } catch (error) {
       client.disconnect(true);
+      console.log('Unauthorize: Invalid token');
       return;
     }
 

@@ -6,6 +6,7 @@ service NotificationService {
   rpc updateStatus(UpdateStatusDto) returns (Empty) {}
   rpc findMany(NotificationFindParams) returns (Notifications) {}
   rpc delete(NotificationWhereUnique) returns (Empty) {}
+  rpc countUnread(UserId) returns (UnreadCount) {}
 }
 
 message UpsertNotificationDto {
@@ -31,8 +32,7 @@ message Notification {
   string url = 5;
   Content content = 6;
   bool read = 7;
-  string createdAt = 8;
-  string updatedAt = 9;
+  string lastModified = 8;
 }
 
 message Obj {
@@ -53,6 +53,15 @@ message Highlight {
 
 message Notifications {
   repeated Notification notifications = 1;
+  bool hasMore = 2;
+}
+
+message UserId {
+  string userId = 1;
+}
+
+message UnreadCount {
+  int32 count = 1;
 }
 
 message NotificationWhereUnique {
