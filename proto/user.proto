@@ -10,11 +10,16 @@ service UserService {
     rpc findById(UserId) returns (UserMessage);
     rpc create(CreateUserDto) returns (UserMessage);
     rpc update(UpdateUserDto) returns (UserMessage);
+    rpc search(SearchParams) returns (UsersId);
     rpc delete(UserId) returns (UserMessage);
 }
 
 message UserId {
     string id = 1;
+}
+
+message UsersId {
+    repeated UserId usersId = 1;
 }
 
 message UserMessage {

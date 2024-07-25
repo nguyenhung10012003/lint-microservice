@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && nest build user && nest build post && nest build relationship && nest build interaction && nest build notification && nest build auth",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "prisma:install user": "npx prisma migrate dev --schema prisma/user/user-schema.prisma",
     "prisma:install post": "npx prisma migrate dev --schema prisma/post/post-schema.prisma",

@@ -29,6 +29,11 @@ export class UserController {
     return this.userService.findAll(userQuery.extract());
   }
 
+  @Get('search')
+  search(@Query() query: { key: string; skip: number; take: number }) {
+    return this.userService.search(query);
+  }
+
   @Get(':id')
   @UseGuards(AccessTokenGuard)
   findById(@Param('id') id: string) {
