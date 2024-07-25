@@ -28,8 +28,22 @@ export class CommentController {
   }
 
   @Get()
-  find(@Query() query: ManyQuery) {
-    const params = new CommentQuery(query.select, query.skip, query.take);
+  find(
+    @Query()
+    query: ManyQuery & {
+      orderField?: 'createdAt' | 'updatedAt';
+      orderDirection?: 'asc' | 'desc';
+    },
+  ) {
+    const params = new CommentQuery(
+      query.select,
+      query.skip,
+      query.take,
+      query.postId?.toString(),
+      query.orderField,
+      query.orderDirection,
+    );
+
     return this.commentService.find(params.extract());
   }
 
@@ -37,6 +51,13 @@ export class CommentController {
   count(@Query() query: CountQuery) {
     return this.commentService.count({
       postId: query.postId + '',
+    });
+  }
+
+  @Get(':id')
+  findOne(@Req() req: any, @Query() query: { select?: string[] }) {
+    return this.commentService.findOne({
+      id: req.params.id,
     });
   }
 

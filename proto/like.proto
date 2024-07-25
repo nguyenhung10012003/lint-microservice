@@ -8,6 +8,7 @@ service LikeService {
   rpc delete(LikeWhereUnique) returns (Like) {}
   rpc find(LikeParams) returns (Likes) {}
   rpc count(LikeWhere) returns (Count) {}
+  rpc exists(LikeWhere) returns (Exist) {}
 }
 
 message LikeDto {
@@ -46,4 +47,8 @@ message LikeId {
 
 message Likes {
   repeated Like likes = 1;
+}
+
+message Exist {
+  bool exist = 1;
 }

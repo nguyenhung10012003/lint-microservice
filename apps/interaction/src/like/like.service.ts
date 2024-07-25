@@ -39,4 +39,12 @@ export class LikeService {
       count: await this.prismaService.like.count({ where }),
     };
   }
+
+  async exists(where: Prisma.LikeWhereInput) {
+    return {
+      exist: await this.prismaService.like
+        .count({ where })
+        .then((count) => count > 0),
+    };
+  }
 }

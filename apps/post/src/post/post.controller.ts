@@ -7,6 +7,7 @@ import {
   PostWhereUnique,
   Posts,
 } from '@app/common/types/post';
+import { SearchParams } from '@app/common/types/query';
 import { convertOrderByObject } from '@app/common/utils/order-by-query';
 import { Controller } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -16,6 +17,9 @@ import { PostService } from './post.service';
 @PostServiceControllerMethods()
 export class PostController implements PostServiceController {
   constructor(private readonly postService: PostService) {}
+  search(request: SearchParams): Promise<Posts> | Observable<Posts> | Posts {
+    return this.postService.search(request);
+  }
   create(request: PostDto) {
     return this.postService.create(request);
   }

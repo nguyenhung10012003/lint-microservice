@@ -39,12 +39,28 @@ export class CommentService {
     };
   }
 
-  async findOne(where: Prisma.CommentWhereUniqueInput) {
-    const comment = await this.prismaService.comment.findUnique({ where });
+  async findOne({
+    where,
+    include,
+  }: {
+    where: Prisma.CommentWhereUniqueInput;
+    include?: Prisma.CommentInclude;
+  }) {
+    const comment = await this.prismaService.comment.findUnique({
+      where,
+      include,
+    });
     return {
       ...comment,
       createdAt: comment.createdAt?.toISOString(),
       updatedAt: comment.updatedAt?.toISOString(),
+      replies: comment.replies?.map((reply) => {
+        return {
+          ...reply,
+          createdAt: reply.createdAt?.toISOString(),
+          updatedAt: reply.updatedAt?.toISOString(),
+        };
+      }),
     };
   }
 

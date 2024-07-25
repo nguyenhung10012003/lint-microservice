@@ -11,6 +11,7 @@ service PostService {
   rpc find(PostFindParams) returns (Posts) {}
   rpc findOne(PostWhereUnique) returns (Post) {}
   rpc delete(PostWhereUnique) returns (Post) {}
+  rpc search(SearchParams) returns (Posts) {}
 }
 
 message PostDto {

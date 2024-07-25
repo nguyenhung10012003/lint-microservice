@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package interaction;
 import "count.proto";
+import "query.proto";
 
 service CommentService {
   rpc create(CommentDto) returns (Comment) {}
@@ -72,6 +73,16 @@ message CommentParams {
   optional int32 take = 2;
   optional int32 skip = 3;
   optional CommentSelect select = 4;
+  optional CommentOrderBy orderBy = 5;
+}
+
+message CommentOrderBy {
+  optional SortOrder id = 1;
+  optional SortOrder userId = 2;
+  optional SortOrder postId = 3;
+  optional SortOrder content = 4;
+  optional SortOrder createdAt = 5;
+  optional SortOrder updatedAt = 6;
 }
 
 message CommentId {
@@ -126,6 +137,16 @@ message ReplyParams {
   optional int32 take = 2;
   optional int32 skip = 3;
   optional ReplySelect select = 4;
+  optional ReplyOrderBy orderBy = 5;
+}
+
+message ReplyOrderBy {
+  optional SortOrder id = 1;
+  optional SortOrder userId = 2;
+  optional SortOrder commentId = 3;
+  optional SortOrder content = 4;
+  optional SortOrder createdAt = 5;
+  optional SortOrder updatedAt = 6;
 }
 
 message ReplyId {

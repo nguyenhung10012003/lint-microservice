@@ -11,6 +11,7 @@ import {
   Comments,
 } from '@app/common/types/comment';
 import { Count } from '@app/common/types/count';
+import { convertOrderByObject } from '@app/common/utils/order-by-query';
 import { Controller } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { CommentService } from './comment.service';
@@ -33,12 +34,19 @@ export class CommentController implements CommentServiceController {
   find(
     request: CommentParams,
   ): Comments | Promise<Comments> | Observable<Comments> {
-    return this.commentService.find(request);
+    return this.commentService.find({
+      ...request,
+      orderBy: convertOrderByObject(request.orderBy),
+      include: { replies: false },
+    });
   }
   findOne(
     request: CommentWhereUnique,
   ): Comment | Promise<Comment> | Observable<Comment> {
-    return this.commentService.findOne(request);
+    return this.commentService.findOne({
+      where: request,
+      include: { replies: true },
+    });
   }
   update(
     request: CommentUpdateDto,

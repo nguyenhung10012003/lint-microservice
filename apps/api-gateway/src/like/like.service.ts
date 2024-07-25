@@ -6,15 +6,15 @@ import {
   LikeWhere,
   LikeWhereUnique,
 } from '@app/common/types/like';
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { MicroService } from '../grpc-client/microservice';
 import {
   NOTIFICATION_SERVICE_NAME,
   NotificationServiceClient,
 } from '@app/common/types/notification';
 import { POST_SERVICE_NAME, PostServiceClient } from '@app/common/types/post';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { MicroService } from '../grpc-client/microservice';
 
 @Injectable()
 export class LikeService implements OnModuleInit {
@@ -65,5 +65,9 @@ export class LikeService implements OnModuleInit {
 
   async count(where: LikeWhere) {
     return this.likeClient.count(where);
+  }
+
+  exists(params: { userId: string; postId: string }) {
+    return this.likeClient.exists(params);
   }
 }

@@ -1,3 +1,4 @@
+import { SortOrder } from '@app/common/types/query';
 import { SelectQuery, SkipQuery, TakeQuery } from '../../types/query';
 
 export class CommentQuery extends SelectQuery implements TakeQuery, SkipQuery {
@@ -13,10 +14,24 @@ export class CommentQuery extends SelectQuery implements TakeQuery, SkipQuery {
     'userId',
     'replies',
   ];
-  constructor(select: string[], skip: number, take: number) {
+  postId?: string;
+  orderField?: 'createdAt' | 'updatedAt';
+  orderDirection?: 'asc' | 'desc';
+
+  constructor(
+    select: string[],
+    skip: number,
+    take: number,
+    postId?: string,
+    orderField?: 'createdAt' | 'updatedAt',
+    orderDirection?: 'asc' | 'desc',
+  ) {
     super(select);
     this.skip = skip;
     this.take = take;
+    this.postId = postId;
+    this.orderField = orderField;
+    this.orderDirection = orderDirection;
   }
 
   extract() {
@@ -24,6 +39,11 @@ export class CommentQuery extends SelectQuery implements TakeQuery, SkipQuery {
       select: this.extractSelect(),
       skip: this.skip,
       take: this.take,
+      where: { postId: this.postId },
+      orderBy: {
+        [this.orderField]:
+          this.orderDirection === 'asc' ? SortOrder.ASC : SortOrder.DESC,
+      },
     };
   }
 }

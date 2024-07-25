@@ -20,7 +20,6 @@ export class AwsS3Service {
       ContentType: file.mimetype,
     };
     const data = await this.s3.upload(params).promise();
-    console.log(data.Location);
     return data.Location;
   }
 

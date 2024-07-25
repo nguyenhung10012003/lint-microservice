@@ -26,4 +26,13 @@ export class PostService implements OnModuleInit {
   async findMany(params: PostFindParams) {
     return this.postClient.find(params);
   }
+
+  async search(params: {
+    key: string;
+    skip: number;
+    take: number;
+    tags: string[];
+  }) {
+    return this.postClient.search(params);
+  }
 }

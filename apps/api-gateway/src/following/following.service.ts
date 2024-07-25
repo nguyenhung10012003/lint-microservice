@@ -4,14 +4,14 @@ import {
   FollowWhere,
   FollowingServiceClient,
 } from '@app/common/types/following';
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { MicroService } from '../grpc-client/microservice';
 import {
   NOTIFICATION_SERVICE_NAME,
   NotificationServiceClient,
 } from '@app/common/types/notification';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { MicroService } from '../grpc-client/microservice';
 
 @Injectable()
 export class FollowingService implements OnModuleInit {
