@@ -25,9 +25,7 @@ services:
     command: ["yarn" , "start:dev", "auth"]
     
   relationship-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: lint-microservice:latest
     ports:
       - "5002:5002"
     env_file:
