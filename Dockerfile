@@ -20,7 +20,4 @@ RUN yarn run prisma:all
 RUN yarn run build
 
 # Khai báo cổng mà ứng dụng sẽ chạy
-EXPOSE 5000
-
-# Command để khởi chạy ứng dụng
-CMD ["yarn", "run", "start:prod"]
+EXPOSE 8000

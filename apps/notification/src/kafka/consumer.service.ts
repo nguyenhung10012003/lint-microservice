@@ -10,7 +10,7 @@ import {
 export class ConsumerService implements OnApplicationShutdown {
   private readonly kafka = new Kafka({
     clientId: 'notification-service',
-    brokers: [process.env.KAFKA_URL || 'localhost:9092'],
+    brokers: [process.env.KAFKA_URL],
   });
 
   private readonly consumers: Consumer[] = [];
