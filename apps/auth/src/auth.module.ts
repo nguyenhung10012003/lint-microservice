@@ -13,6 +13,7 @@ const grpcClient = ClientsModule.register([
     name: USER_PACKAGE_NAME,
     transport: Transport.GRPC,
     options: {
+      url: process.env.USER_URL,
       package: USER_PACKAGE_NAME,
       protoPath: join(__dirname, '../../user/user.proto'),
     },

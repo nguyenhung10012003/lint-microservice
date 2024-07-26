@@ -24,3 +24,6 @@ EXPOSE 5000
 
 # Command để khởi chạy ứng dụng
 CMD ["yarn", "run", "start:prod"]
+
+# Chạy lệnh sau để build image
+# docker build -t lint-microservice:latest .

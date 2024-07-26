@@ -13,7 +13,7 @@ const GrpcClients = ClientsModule.register([
     name: MicroService.AUTH_SERVICE,
     transport: Transport.GRPC,
     options: {
-      url: process.env.AUTH_URL || '127.0.0.1:5001',
+      url: process.env.AUTH_URL,
       package: 'auth',
       protoPath: join(__dirname, '../auth/auth.proto'),
     },
@@ -22,7 +22,7 @@ const GrpcClients = ClientsModule.register([
     name: MicroService.USER_SERVICE,
     transport: Transport.GRPC,
     options: {
-      url: process.env.USER_URL || '127.0.0.1:5000',
+      url: process.env.USER_URL,
       package: [USER_PACKAGE_NAME],
       protoPath: [
         join(__dirname, '../user/user.proto'),
@@ -34,7 +34,7 @@ const GrpcClients = ClientsModule.register([
     name: MicroService.RELATIONSHIP_SERVICE,
     transport: Transport.GRPC,
     options: {
-      url: process.env.RELATIONSHIP_URL || '127.0.0.1:5002',
+      url: process.env.RELATIONSHIP_URL,
       package: RELATIONSHIP_PACKAGE_NAME,
       protoPath: [
         join(__dirname, '../relationship/blacklist.proto'),
