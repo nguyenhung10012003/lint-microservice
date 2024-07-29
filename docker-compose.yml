@@ -1,9 +1,57 @@
-version: '2'
+version: '3.8'
 services:
+  api-gateway:
+    image: lint-microservice:latest
+    ports:
+      - "8000:8000"
+    command: ["yarn", "start:prod"]
+     
+  user-service:
+    image: lint-microservice:latest
+    ports:
+      - "5000:5000"
+    command: ["node" , "dist/apps/user/src/main"]
+    
+  auth-service:
+    image: lint-microservice:latest
+    ports:
+      - "5001:5001"
+    command: ["node" , "dist/apps/auth/src/main"]
+    
+  relationship-service:
+    image: lint-microservice:latest
+    ports:
+      - "5002:5002"
+    command: ["node" , "dist/apps/relationship/src/main"]
+    
+
+  post-service:
+    image: lint-microservice:latest
+    ports:
+      - "5003:5003"
+    command: ["node" , "dist/apps/post/src/main"]
+    
+
+  interaction-service:
+    image: lint-microservice:latest
+    ports:
+      - "5004:5004"
+    command: ["node" , "dist/apps/interaction/src/main"]
+    
+
+  notification-service:
+    image: lint-microservice:latest
+    ports:
+      - "5005:5005"
+      - "3001:3001"
+    command: ["node" , "dist/apps/notification/src/main"]
+    
+
   zookeeper:
     image: wurstmeister/zookeeper:3.4.6
     ports:
       - "2181:2181"
+  
   kafka:
     image: wurstmeister/kafka:latest
     ports:

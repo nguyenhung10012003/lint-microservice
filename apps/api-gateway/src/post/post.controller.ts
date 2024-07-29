@@ -10,11 +10,12 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
+import { ParseTagsPipe } from '../lib/pipes/parse-tags.pipe';
 import { AwsS3Service } from '../s3/aws-s3.service';
-import { ManyQuery } from '../types/query';
 import { fileAcceptReg } from '../utils/file-accept';
 import { PostDto } from './model/post.dto';
 import { PostQuery } from './model/post.query';
@@ -44,6 +45,7 @@ export class PostController {
       },
     }),
   )
+  @UsePipes(ParseTagsPipe)
   async create(
     @Req() req: any,
     @Body() post: PostDto,
@@ -63,8 +65,34 @@ export class PostController {
   }
 
   @Get()
-  async find(@Query() query: ManyQuery) {
-    const postQuery = new PostQuery(query.select, query.skip, query.take);
+  async find(
+    @Query()
+    query: PostQuery,
+  ) {
+    const postQuery = new PostQuery({
+      select: query.select,
+      skip: query.skip,
+      take: query.take,
+      orderField: query.orderField,
+      orderDirection: query.orderDirection,
+      userId: query.userId,
+    });
+
     return this.postService.findMany(postQuery.extract());
+  }
+
+  @Get('search')
+  async search(
+    @Query('key') key: string,
+    @Query('skip') skip: number,
+    @Query('take') take: number,
+    @Query('tags') tags: string[],
+  ) {
+    return this.postService.search({
+      key,
+      skip,
+      take,
+      tags: tags && [].concat(tags),
+    });
   }
 }

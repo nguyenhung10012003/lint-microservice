@@ -6,12 +6,19 @@
 
 /* eslint-disable */
 
-export const protobufPackage = "";
+export const protobufPackage = '';
 
 export enum SortOrder {
   ASC = 0,
   DESC = 1,
   UNRECOGNIZED = -1,
+}
+
+export interface SearchParams {
+  key?: string | undefined;
+  skip?: number | undefined;
+  take?: number | undefined;
+  tags?: string[];
 }
 
 export interface StringFilter {
@@ -47,4 +54,4 @@ export interface DateTimeFilter {
   gte?: string | undefined;
 }
 
-export const _PACKAGE_NAME = "";
+export const _PACKAGE_NAME = '';

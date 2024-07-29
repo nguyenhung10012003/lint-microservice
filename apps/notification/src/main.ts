@@ -10,7 +10,7 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
-      url: process.env.NOTIFICATION_URL || '127.0.0.1:5005',
+      url: process.env.NOTIFICATION_URL,
       package: NOTIFICATION_PACKAGE_NAME,
       protoPath: [join(__dirname, '../notification.proto')],
     },
@@ -20,7 +20,7 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+        brokers: [process.env.KAFKA_URL],
       },
       consumer: {
         groupId: 'notification-consumer',
@@ -30,6 +30,6 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   // web socket server
-  await app.listen(3001);
+  await app.listen(3001, '0.0.0.0');
 }
 bootstrap();

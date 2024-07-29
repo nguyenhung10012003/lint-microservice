@@ -53,15 +53,23 @@ export class UserService {
     };
   }
 
-  async findOne(data: Prisma.UserWhereUniqueInput) {
+  async findOne(
+    data: Prisma.UserWhereUniqueInput,
+    include?: Prisma.UserInclude,
+  ) {
     const user = await this.prismaService.user.findUnique({
       where: data,
+      include: include,
     });
 
     return {
       ...user,
       createdAt: user?.createdAt.toISOString(),
       updatedAt: user?.updatedAt.toISOString(),
+      profile: {
+        ...user?.profile,
+        dob: user?.profile?.dob?.toISOString(),
+      },
     };
   }
 
@@ -94,6 +102,15 @@ export class UserService {
       ...user,
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
+    };
+  }
+
+  async search(params: { key?: string; skip?: number; take?: number }) {
+    const result: { id: string }[] = await this.prismaService
+      .$queryRaw`SELECT User.id FROM User JOIN Profile ON User.id = Profile.userId ORDER BY levenshtein(${params.key}, name) LIMIT ${params.take || 10} OFFSET ${params.skip || 0}`;
+    console.log(result);
+    return {
+      usersId: result,
     };
   }
 }

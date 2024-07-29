@@ -8,12 +8,16 @@
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { ProfileMessage } from "./profile";
-import { SortOrder, StringFilter } from "./query";
+import { SearchParams, SortOrder, StringFilter } from "./query";
 
 export const protobufPackage = "user";
 
 export interface UserId {
   id: string;
+}
+
+export interface UsersId {
+  usersId: UserId[];
 }
 
 export interface UserMessage {
@@ -95,6 +99,8 @@ export interface UserServiceClient {
 
   update(request: UpdateUserDto): Observable<UserMessage>;
 
+  search(request: SearchParams): Observable<UsersId>;
+
   delete(request: UserId): Observable<UserMessage>;
 }
 
@@ -109,12 +115,14 @@ export interface UserServiceController {
 
   update(request: UpdateUserDto): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 
+  search(request: SearchParams): Promise<UsersId> | Observable<UsersId> | UsersId;
+
   delete(request: UserId): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["findAll", "findOne", "findById", "create", "update", "delete"];
+    const grpcMethods: string[] = ["findAll", "findOne", "findById", "create", "update", "search", "delete"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

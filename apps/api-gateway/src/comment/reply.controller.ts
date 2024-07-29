@@ -28,9 +28,14 @@ export class ReplyController {
   }
 
   @Get()
-  find(@Query() query: ManyQuery) {
+  find(
+    @Query()
+    query: ManyQuery,
+  ) {
     const params = new ReplyQuery(query.select, query.skip, query.take, {
       commentId: query.commentId?.toString(),
+      orderField: query.orderField as 'createdAt' | 'updatedAt',
+      orderDirection: query.orderDirection as 'asc' | 'desc',
     });
     return this.replyService.find(params.extract());
   }

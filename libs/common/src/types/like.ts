@@ -49,6 +49,10 @@ export interface Likes {
   likes: Like[];
 }
 
+export interface Exist {
+  exist: boolean;
+}
+
 export const INTERACTION_PACKAGE_NAME = "interaction";
 
 export interface LikeServiceClient {
@@ -59,6 +63,8 @@ export interface LikeServiceClient {
   find(request: LikeParams): Observable<Likes>;
 
   count(request: LikeWhere): Observable<Count>;
+
+  exists(request: LikeWhere): Observable<Exist>;
 }
 
 export interface LikeServiceController {
@@ -69,11 +75,13 @@ export interface LikeServiceController {
   find(request: LikeParams): Promise<Likes> | Observable<Likes> | Likes;
 
   count(request: LikeWhere): Promise<Count> | Observable<Count> | Count;
+
+  exists(request: LikeWhere): Promise<Exist> | Observable<Exist> | Exist;
 }
 
 export function LikeServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "delete", "find", "count"];
+    const grpcMethods: string[] = ["create", "delete", "find", "count", "exists"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("LikeService", method)(constructor.prototype[method], method, descriptor);

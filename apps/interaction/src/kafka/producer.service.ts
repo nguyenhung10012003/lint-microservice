@@ -4,7 +4,7 @@ import { Kafka, ProducerRecord } from 'kafkajs';
 @Injectable()
 export class ProducerService implements OnApplicationShutdown {
   private readonly kafka = new Kafka({
-    brokers: [process.env.KAFKA_URL || 'localhost:9092'],
+    brokers: [process.env.KAFKA_URL],
   });
   private readonly producer = this.kafka.producer();
   private isConnected = false;

@@ -5,6 +5,13 @@ enum SortOrder {
   DESC = 1;
 }
 
+message SearchParams {
+  optional string key = 1;
+  optional int32 skip = 2;
+  optional int32 take = 3;
+  repeated string tags = 4;
+}
+
 message StringFilter {
   optional string equals = 1;
   repeated string in = 2;

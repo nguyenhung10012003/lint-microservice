@@ -9,6 +9,7 @@ import {
   ReplyUpdateDto,
   ReplyWhereUnique,
 } from '@app/common/types/comment';
+import { convertOrderByObject } from '@app/common/utils/order-by-query';
 import { Controller, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { ReplyService } from './reply.service';
@@ -27,7 +28,10 @@ export class ReplyController implements ReplyServiceController {
     return this.replyService.delete(request);
   }
   find(request: ReplyParams): Replies | Promise<Replies> | Observable<Replies> {
-    return this.replyService.find(request);
+    return this.replyService.find({
+      ...request,
+      orderBy: convertOrderByObject(request.orderBy),
+    });
   }
   findOne(
     request: ReplyWhereUnique,

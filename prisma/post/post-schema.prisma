@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../../node_modules/@prisma/prisma-post-client"
+  provider        = "prisma-client-js"
+  output          = "../../node_modules/@prisma/prisma-post-client"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -23,6 +24,8 @@ model Post {
   sourcePost Post?     @relation("SharedPost", fields: [source], references: [id])
   sharedPost Post[]    @relation("SharedPost")
   postId     String?
+
+  @@fulltext([content])
 }
 
 model Media {

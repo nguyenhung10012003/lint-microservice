@@ -8,7 +8,7 @@
 import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { Media, MediaDto } from './media';
-import { DateTimeFilter, SortOrder, StringFilter } from './query';
+import { DateTimeFilter, SearchParams, SortOrder, StringFilter } from './query';
 import { Tag, TagDto } from './tag';
 
 export const protobufPackage = 'post';
@@ -24,8 +24,8 @@ export interface PostDto {
   content?: string | undefined;
   views?: number | undefined;
   share?: number | undefined;
-  medias: MediaDto[];
-  tags: TagDto[];
+  medias?: MediaDto[];
+  tags?: TagDto[];
   sourceId?: string | undefined;
   scope?: PostScope | undefined;
 }
@@ -110,6 +110,8 @@ export interface PostServiceClient {
   findOne(request: PostWhereUnique): Observable<Post>;
 
   delete(request: PostWhereUnique): Observable<Post>;
+
+  search(request: SearchParams): Observable<Posts>;
 }
 
 export interface PostServiceController {
@@ -122,6 +124,8 @@ export interface PostServiceController {
   findOne(request: PostWhereUnique): Promise<Post> | Observable<Post> | Post;
 
   delete(request: PostWhereUnique): Promise<Post> | Observable<Post> | Post;
+
+  search(request: SearchParams): Promise<Posts> | Observable<Posts> | Posts;
 }
 
 export function PostServiceControllerMethods() {
@@ -132,6 +136,7 @@ export function PostServiceControllerMethods() {
       'find',
       'findOne',
       'delete',
+      'search',
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(

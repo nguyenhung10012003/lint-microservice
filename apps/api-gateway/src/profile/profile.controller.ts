@@ -90,7 +90,7 @@ export class ProfileController {
     @UploadedFile()
     file?: Express.Multer.File,
   ) {
-    const url = await this.s3Service.uploadFile(file);
+    const url = file && (await this.s3Service.uploadFile(file));
     return this.profileService.update(updateProfileDto.id, {
       name: updateProfileDto.name,
       alias: updateProfileDto.alias,

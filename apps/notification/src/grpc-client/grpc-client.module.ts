@@ -10,7 +10,7 @@ const GrpcClients = ClientsModule.register([
     name: MicroService.USER_SERVICE,
     transport: Transport.GRPC,
     options: {
-      url: process.env.USER_URL || '127.0.0.1:5000',
+      url: process.env.USER_URL,
       package: [USER_PACKAGE_NAME],
       protoPath: [
         join(__dirname, '../../user/user.proto'),
