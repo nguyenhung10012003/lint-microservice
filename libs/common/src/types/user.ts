@@ -5,12 +5,12 @@
 // source: user.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
-import { ProfileMessage } from "./profile";
-import { SearchParams, SortOrder, StringFilter } from "./query";
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
+import { ProfileMessage } from './profile';
+import { SearchParams, SortOrder, StringFilter } from './query';
 
-export const protobufPackage = "user";
+export const protobufPackage = 'user';
 
 export interface UserId {
   id: string;
@@ -82,11 +82,11 @@ export interface UserWhere {
   password?: StringFilter | undefined;
   createdAt?: StringFilter | undefined;
   updatedAt?: StringFilter | undefined;
-  AND: UserWhere[];
-  OR: UserWhere[];
+  AND?: UserWhere[];
+  OR?: UserWhere[];
 }
 
-export const USER_PACKAGE_NAME = "user";
+export const USER_PACKAGE_NAME = 'user';
 
 export interface UserServiceClient {
   findAll(request: FindAllParams): Observable<UsersMessage>;
@@ -105,34 +105,70 @@ export interface UserServiceClient {
 }
 
 export interface UserServiceController {
-  findAll(request: FindAllParams): Promise<UsersMessage> | Observable<UsersMessage> | UsersMessage;
+  findAll(
+    request: FindAllParams,
+  ): Promise<UsersMessage> | Observable<UsersMessage> | UsersMessage;
 
-  findOne(request: FindOneParams): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+  findOne(
+    request: FindOneParams,
+  ): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 
-  findById(request: UserId): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+  findById(
+    request: UserId,
+  ): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 
-  create(request: CreateUserDto): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+  create(
+    request: CreateUserDto,
+  ): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 
-  update(request: UpdateUserDto): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+  update(
+    request: UpdateUserDto,
+  ): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 
-  search(request: SearchParams): Promise<UsersId> | Observable<UsersId> | UsersId;
+  search(
+    request: SearchParams,
+  ): Promise<UsersId> | Observable<UsersId> | UsersId;
 
-  delete(request: UserId): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+  delete(
+    request: UserId,
+  ): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["findAll", "findOne", "findById", "create", "update", "search", "delete"];
+    const grpcMethods: string[] = [
+      'findAll',
+      'findOne',
+      'findById',
+      'create',
+      'update',
+      'search',
+      'delete',
+    ];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcMethod('UserService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("UserService", method)(constructor.prototype[method], method, descriptor);
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(
+        constructor.prototype,
+        method,
+      );
+      GrpcStreamMethod('UserService', method)(
+        constructor.prototype[method],
+        method,
+        descriptor,
+      );
     }
   };
 }
 
-export const USER_SERVICE_NAME = "UserService";
+export const USER_SERVICE_NAME = 'UserService';

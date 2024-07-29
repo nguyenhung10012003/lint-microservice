@@ -27,7 +27,7 @@ export class FollowingController {
   async unfollow(@Req() req: any) {
     return this.followingService.delete(
       req.body.id,
-      req.user.userId,
+      req.body.followerId,
       req.body.followingId,
     );
   }

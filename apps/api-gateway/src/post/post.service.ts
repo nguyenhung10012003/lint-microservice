@@ -28,10 +28,11 @@ export class PostService implements OnModuleInit {
   }
 
   async search(params: {
-    key: string;
-    skip: number;
-    take: number;
-    tags: string[];
+    key?: string;
+    skip?: number;
+    take?: number;
+    tags?: string[];
+    idsNotIn?: string[];
   }) {
     return this.postClient.search(params);
   }
