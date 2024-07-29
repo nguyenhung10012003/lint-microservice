@@ -18,7 +18,8 @@ export class FollowingService {
       subjectId: data.followerId,
       diId: data.followingId,
     };
-    await this.producerService.produce({
+
+    this.producerService.produce({
       topic: 'notification',
       messages: [
         {

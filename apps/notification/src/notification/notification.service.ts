@@ -80,7 +80,6 @@ export class NotificationService implements OnModuleInit {
     const subject = await firstValueFrom(
       this.profileService.findOne({ userId: payload.subjectId }),
     );
-
     if (!subject) {
       throw new BadRequestException('Subject not found');
     }
@@ -90,6 +89,10 @@ export class NotificationService implements OnModuleInit {
       post = await firstValueFrom(
         this.postService.findOne({ id: payload.postId }),
       );
+      // return if user comment/like own post
+      if (post.userId === payload.subjectId) {
+        return;
+      }
     }
 
     let data: UpsertNotificationDto;
@@ -138,11 +141,9 @@ export class NotificationService implements OnModuleInit {
       case NotificationType.FOLLOW:
         data = {
           type: type,
-          // following
+          // following <-> you
           diObject: {
-            id: subject.id,
-            name: subject.name,
-            imageUrl: subject.avatar,
+            id: payload.diId,
           },
           // follower
           subject: {
@@ -151,11 +152,12 @@ export class NotificationService implements OnModuleInit {
             imageUrl: subject.avatar,
           },
           url: generateUrl(type, subject.id),
-          userId: subject.id,
+          userId: payload.diId,
           postId: null,
         };
         break;
     }
+    console.log(data);
     await this.upsert(data);
   }
 
@@ -245,7 +247,7 @@ export class NotificationService implements OnModuleInit {
     this.eventEmitter.emit('notification', {
       notificationType,
       ...rest,
-      lastSubject,
+      subject: lastSubject,
       unreadCount,
     });
   }

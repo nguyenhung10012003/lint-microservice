@@ -24,7 +24,7 @@ export class CommentService {
       diName: newComment.content,
     };
 
-    await this.producerService.produce({
+    this.producerService.produce({
       topic: 'notification',
       messages: [
         {
