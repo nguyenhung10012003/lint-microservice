@@ -144,21 +144,26 @@ export class PostService {
     skip?: number;
     take?: number;
     tags?: string[];
+    idsNotIn?: string[];
   }) {
     const posts = await this.prisma.post.findMany({
       where: {
         content: params.key && { contains: params.key },
-        tags: {
+        tags: params.tags && {
           some: {
             name: {
               in: params.tags,
             },
           },
         },
+        id: params.idsNotIn && {
+          notIn: params.idsNotIn,
+        },
       },
       skip: params.skip,
       take: params.take,
       include: { medias: true, tags: true },
+      orderBy: { createdAt: 'desc' },
     });
     return {
       posts: posts.map((post) => {

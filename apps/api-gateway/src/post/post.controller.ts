@@ -76,6 +76,7 @@ export class PostController {
       orderField: query.orderField,
       orderDirection: query.orderDirection,
       userId: query.userId,
+      idsNotIn: query.idsNotIn,
     });
 
     return this.postService.findMany(postQuery.extract());
@@ -87,12 +88,14 @@ export class PostController {
     @Query('skip') skip: number,
     @Query('take') take: number,
     @Query('tags') tags: string[],
+    @Query('idsNotIn') idsNotIn: string[],
   ) {
     return this.postService.search({
       key,
       skip,
       take,
       tags: tags && [].concat(tags),
+      idsNotIn: idsNotIn && [].concat(idsNotIn),
     });
   }
 }

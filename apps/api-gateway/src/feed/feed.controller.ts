@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { AccessTokenGuard } from '../lib/guards/access-token.guard';
 import { FeedService } from './feed.service';
+import { FeedQuery } from './model/feed.query';
 
 @Controller('feed')
 @UseGuards(AccessTokenGuard)
@@ -10,9 +11,13 @@ export class FeedController {
   @Get()
   getFeed(
     @Req() req: any,
-    @Query('skip') skip: number,
-    @Query('take') take: number,
+    @Query()
+    query: FeedQuery,
   ) {
-    return this.feedService.getFeed(req.user.userId, skip, take);
+    const feedQuery = new FeedQuery(query);
+    return this.feedService.getFeed({
+      ...feedQuery.extract(),
+      userId: req.user.userId,
+    });
   }
 }
