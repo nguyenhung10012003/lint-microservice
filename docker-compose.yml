@@ -65,6 +65,8 @@ services:
     image: wurstmeister/kafka:latest
     ports:
       - "9092:9092"
+    depends_on:
+      - zookeeper
     expose:
       - "9093"
     environment:
