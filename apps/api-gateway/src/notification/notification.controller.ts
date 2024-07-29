@@ -50,4 +50,10 @@ export class NotificationController {
     where.userId = userId;
     await this.notificationService.delete(where);
   }
+
+  @Get('count-unread')
+  async countUnread(@Request() request) {
+    const userId = request.user.userId;
+    return this.notificationService.countUnread(userId);
+  }
 }

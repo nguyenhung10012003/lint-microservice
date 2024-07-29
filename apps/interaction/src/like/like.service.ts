@@ -21,7 +21,7 @@ export class LikeService {
       diName: '',
     };
 
-    await this.producerService.produce({
+    this.producerService.produce({
       topic: 'notification',
       messages: [
         {

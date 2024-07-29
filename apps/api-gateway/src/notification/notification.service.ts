@@ -35,4 +35,8 @@ export class NotificationService implements OnModuleInit {
   async updateStatus(updateStatusDto: UpdateStatusDto) {
     return this.notificationService.updateStatus(updateStatusDto);
   }
+
+  countUnread(userId: string) {
+    return this.notificationService.countUnread({ userId });
+  }
 }

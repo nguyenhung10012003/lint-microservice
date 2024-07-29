@@ -19,6 +19,7 @@ model Notification {
   subjectCount  Int
   url           String
   read          Boolean
+  lastModified  DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

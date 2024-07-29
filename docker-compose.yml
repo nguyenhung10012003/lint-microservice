@@ -2,24 +2,28 @@ version: '3.8'
 services:
   api-gateway:
     image: lint-microservice:latest
+    container_name: api-gateway
     ports:
       - "8000:8000"
     command: ["yarn", "start:prod"]
      
   user-service:
     image: lint-microservice:latest
+    container_name: user-service
     ports:
       - "5000:5000"
     command: ["node" , "dist/apps/user/src/main"]
     
   auth-service:
     image: lint-microservice:latest
+    container_name: auth-service
     ports:
       - "5001:5001"
     command: ["node" , "dist/apps/auth/src/main"]
     
   relationship-service:
     image: lint-microservice:latest
+    container_name: relationship-service
     ports:
       - "5002:5002"
     command: ["node" , "dist/apps/relationship/src/main"]
@@ -27,6 +31,7 @@ services:
 
   post-service:
     image: lint-microservice:latest
+    container_name: post-service
     ports:
       - "5003:5003"
     command: ["node" , "dist/apps/post/src/main"]
@@ -34,6 +39,7 @@ services:
 
   interaction-service:
     image: lint-microservice:latest
+    container_name: interaction-service
     ports:
       - "5004:5004"
     command: ["node" , "dist/apps/interaction/src/main"]
@@ -41,6 +47,7 @@ services:
 
   notification-service:
     image: lint-microservice:latest
+    container_name: interaction-service
     ports:
       - "5005:5005"
       - "3001:3001"
@@ -49,7 +56,6 @@ services:
     restart: on-failure:10
     command: ["node" , "dist/apps/notification/src/main"]
     
-
   zookeeper:
     image: zookeeper:latest
     ports:

@@ -23,7 +23,12 @@ export class AuthService implements OnModuleInit {
   }
 
   async signup(data: { email: string; password: string }) {
-    await lastValueFrom(this.userClient.create(data));
+    console.log(data);
+    const request = {
+      email: data.email,
+      password: data.password,
+    };
+    await lastValueFrom(this.userClient.create(request));
     return this.signin(data);
   }
 

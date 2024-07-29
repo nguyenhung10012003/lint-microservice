@@ -6,6 +6,8 @@ import {
   Empty,
   UpdateStatusDto,
   NotificationWhereUnique,
+  UserId,
+  UnreadCount,
 } from '@app/common/types/notification';
 import { Controller } from '@nestjs/common';
 import { NotificationService } from './notification.service';
@@ -32,5 +34,11 @@ export class NotificationController implements NotificationServiceController {
     data: NotificationWhereUnique,
   ): Empty | Promise<Empty> | Observable<Empty> {
     return this.notificationService.delete(data);
+  }
+
+  countUnread(
+    data: UserId,
+  ): UnreadCount | Promise<UnreadCount> | Observable<UnreadCount> {
+    return this.notificationService.countUnread(data);
   }
 }

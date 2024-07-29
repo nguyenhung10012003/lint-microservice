@@ -37,6 +37,7 @@ export class ProfileService {
       id: profile.id,
       name: profile.name,
       avatar: profile.avatar,
+      alias: profile.alias,
     };
   }
 
