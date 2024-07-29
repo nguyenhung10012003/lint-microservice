@@ -39,7 +39,7 @@ services:
 
   interaction-service:
     image: lint-microservice:latest
-    container_name: interaction-service
+    container_name: notification-service
     ports:
       - "5004:5004"
     command: ["node" , "dist/apps/interaction/src/main"]
