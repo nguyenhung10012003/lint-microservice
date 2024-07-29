@@ -19,6 +19,7 @@ export interface SearchParams {
   skip?: number | undefined;
   take?: number | undefined;
   tags?: string[];
+  idsNotIn?: string[];
 }
 
 export interface StringFilter {

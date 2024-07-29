@@ -1,3 +1,4 @@
+import { ErrorInterceptor } from '@app/common/interceptors/error.interceptor';
 import {
   Post,
   PostDto,
@@ -9,12 +10,13 @@ import {
 } from '@app/common/types/post';
 import { SearchParams } from '@app/common/types/query';
 import { convertOrderByObject } from '@app/common/utils/order-by-query';
-import { Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { PostService } from './post.service';
 
 @Controller()
 @PostServiceControllerMethods()
+@UseInterceptors(ErrorInterceptor)
 export class PostController implements PostServiceController {
   constructor(private readonly postService: PostService) {}
   search(request: SearchParams): Promise<Posts> | Observable<Posts> | Posts {

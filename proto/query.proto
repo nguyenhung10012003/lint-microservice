@@ -10,6 +10,7 @@ message SearchParams {
   optional int32 skip = 2;
   optional int32 take = 3;
   repeated string tags = 4;
+  repeated string idsNotIn = 5;
 }
 
 message StringFilter {

@@ -43,27 +43,48 @@ export class FeedService implements OnModuleInit {
       );
   }
 
-  async getFeed(userId: string, skip?: number, take?: number) {
+  async getFeed(params: {
+    skip?: number;
+    take?: number;
+    userId: string;
+    idsNotIn?: string[];
+  }) {
     const following = await lastValueFrom(
       this.followingService.find({
-        followerId: userId,
+        followerId: params.userId,
       }),
     );
 
     const followingIds = following.follows?.map((follow) => follow.followingId);
-    if (!followingIds) return [];
+    if (!followingIds)
+      return this.postService.find({
+        where: {
+          id: {
+            notIn: params.idsNotIn,
+          },
+        },
+        orderBy: {
+          createdAt: SortOrder.DESC,
+        },
+        skip: params.skip,
+        take: params.take,
+      });
 
+    console.log(params.userId);
     return this.postService.find({
       where: {
         userId: {
-          in: [...followingIds, userId],
+          in: [...followingIds, params.userId],
+        },
+        id: {
+          notIn: params.idsNotIn,
         },
       },
       orderBy: {
         createdAt: SortOrder.DESC,
       },
-      skip,
-      take,
+      skip: params.skip,
+      take: params.take,
     });
   }
 }

@@ -20,6 +20,8 @@ export class PostQuery extends SelectQuery implements TakeQuery, SkipQuery {
   orderDirection?: 'asc' | 'desc';
   @TransformToArray()
   userId?: string[];
+  @TransformToArray()
+  idsNotIn?: string[];
   constructor({
     select,
     skip,
@@ -27,6 +29,7 @@ export class PostQuery extends SelectQuery implements TakeQuery, SkipQuery {
     orderField,
     orderDirection,
     userId,
+    idsNotIn,
   }: {
     select?: string[];
     skip?: number;
@@ -34,6 +37,7 @@ export class PostQuery extends SelectQuery implements TakeQuery, SkipQuery {
     orderField?: 'createdAt' | 'updatedAt';
     orderDirection?: 'asc' | 'desc';
     userId?: string[];
+    idsNotIn?: string[];
   }) {
     super(select);
     this.skip = skip;
@@ -41,6 +45,7 @@ export class PostQuery extends SelectQuery implements TakeQuery, SkipQuery {
     this.orderField = orderField;
     this.orderDirection = orderDirection;
     this.userId = userId;
+    this.idsNotIn = idsNotIn;
   }
   extract() {
     return {
@@ -54,6 +59,9 @@ export class PostQuery extends SelectQuery implements TakeQuery, SkipQuery {
       where: {
         userId: {
           in: this.userId,
+        },
+        id: {
+          notIn: this.idsNotIn,
         },
       },
     };
