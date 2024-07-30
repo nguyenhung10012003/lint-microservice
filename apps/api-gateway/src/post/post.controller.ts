@@ -4,6 +4,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Req,
@@ -97,5 +98,12 @@ export class PostController {
       tags: tags && [].concat(tags),
       idsNotIn: idsNotIn && [].concat(idsNotIn),
     });
+  }
+
+  @Get(':id')
+  async findOne(
+    @Param('id') id: string,
+  ) {
+    return this.postService.findOne({id});
   }
 }

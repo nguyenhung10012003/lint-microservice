@@ -36,4 +36,8 @@ export class PostService implements OnModuleInit {
   }) {
     return this.postClient.search(params);
   }
+
+  async findOne(params: { id: string; userId?: string }) {
+    return this.postClient.findOne(params);
+  }
 }

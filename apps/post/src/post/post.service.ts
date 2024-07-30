@@ -2,6 +2,7 @@ import { MediaType } from '@app/common/types/media';
 import { PostDto, PostScope } from '@app/common/types/post';
 import { Injectable } from '@nestjs/common';
 import { $Enums, Prisma } from '@prisma/prisma-post-client';
+import { GrpcNotFoundException } from 'nestjs-grpc-exceptions';
 import { MediaBuilder } from '../media/model/media.factory';
 import { PrismaService } from '../prisma.service';
 
@@ -114,7 +115,7 @@ export class PostService {
       where,
       include: { medias: true, tags: true },
     });
-    if (!post) return null;
+    if (!post) throw new GrpcNotFoundException('Post not found');
     return {
       ...post,
       medias: post.medias?.map((media) => {
