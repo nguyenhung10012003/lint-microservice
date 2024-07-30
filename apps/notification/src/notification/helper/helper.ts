@@ -28,7 +28,10 @@ export const generateNotificationContent = (
   const data = {
     subjectName: subjectName,
     subjectCount: subjectCount,
-    diContent: diContent + '...',
+    diContent:
+      countWords(diContent) > 5
+        ? getFirstWords(diContent, 5) + '...'
+        : diContent,
   };
 
   let text = '';
@@ -68,7 +71,7 @@ export function generateUrl(type: number, id: string) {
     case 1:
       return `/post/${id}`;
     case 2:
-      return `/comment/${id}`;
+      return `/post/${id}`;
     case 3:
       return `following?following=${id}`;
     default:

@@ -101,9 +101,7 @@ export class PostController {
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-  ) {
-    return this.postService.findOne({id});
+  async findOne(@Param('id') id: string) {
+    return this.postService.findOne({ id });
   }
 }

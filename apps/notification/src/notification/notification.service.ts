@@ -28,7 +28,6 @@ import { NotificationPayload } from '@app/common/types/notification.payload';
 import {
   generateNotificationContent,
   generateUrl,
-  getFirstWords,
   getNotificationType,
 } from './helper/helper';
 import { MediaType } from '@app/common/types/media';
@@ -100,17 +99,22 @@ export class NotificationService implements OnModuleInit {
       case NotificationType.COMMENT:
         data = {
           type: type,
-          // comment
           diObject: {
-            id: payload.diId,
-            name: payload.diName ? getFirstWords(payload.diName, 5) : '',
+            id: post.id,
+            // notification content
+            name: payload.diName ? payload.diName : '',
+            imageUrl: post.medias
+              ? post.medias[0].type === MediaType.IMAGE
+                ? post.medias[0].url
+                : null
+              : null,
           },
           subject: {
             id: subject.id,
             name: subject.name,
             imageUrl: subject.avatar,
           },
-          url: generateUrl(type, payload.diId),
+          url: generateUrl(type, post.id),
           userId: post.userId,
           postId: post.id,
         };
@@ -121,7 +125,7 @@ export class NotificationService implements OnModuleInit {
           // post
           diObject: {
             id: post.id,
-            name: post.content ? getFirstWords(post.content, 5) : '',
+            name: post.content ? post.content : '',
             imageUrl: post.medias
               ? post.medias[0].type === MediaType.IMAGE
                 ? post.medias[0].url
@@ -157,14 +161,17 @@ export class NotificationService implements OnModuleInit {
         };
         break;
     }
-    console.log(data);
+
     await this.upsert(data);
   }
 
   async upsert(upsertDto: UpsertNotificationDto) {
     let notification = null;
-
-    if (upsertDto.postId) {
+    // only upsert if notification is like or comment type
+    if (
+      upsertDto.type === NotificationType.LIKE ||
+      upsertDto.type === NotificationType.COMMENT
+    ) {
       notification = await this.prismaService.notification.findFirst({
         where: {
           AND: [
@@ -178,7 +185,7 @@ export class NotificationService implements OnModuleInit {
       });
     }
 
-    // only add subject or increase subject count if subject is not exist
+    // only add subject or increase subject count if subject does not exist
     let updateSubject = true;
     if (notification) {
       for (const subject of notification.subjects) {
@@ -216,9 +223,7 @@ export class NotificationService implements OnModuleInit {
     };
 
     let upsertNoti = null;
-    let notificationType = ''; // update or create
     if (notification) {
-      notificationType = 'update';
       upsertNoti = await this.prismaService.notification.update({
         where: {
           id: notification.id,
@@ -228,13 +233,10 @@ export class NotificationService implements OnModuleInit {
         },
       });
     } else {
-      notificationType = 'new';
       upsertNoti = await this.prismaService.notification.create({
         data: data,
       });
     }
-
-    const lastSubject = upsertNoti.subjects[upsertNoti.subjects.length - 1];
 
     const unreadCount = await this.prismaService.notification.count({
       where: {
@@ -242,10 +244,11 @@ export class NotificationService implements OnModuleInit {
         read: false,
       },
     });
+
+    const lastSubject = upsertNoti.subjects[upsertNoti.subjects.length - 1];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { subjects, subjectCount: _, ...rest } = upsertNoti;
     this.eventEmitter.emit('notification', {
-      notificationType,
       ...rest,
       subject: lastSubject,
       unreadCount,
