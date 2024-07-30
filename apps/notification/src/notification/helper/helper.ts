@@ -29,7 +29,7 @@ export const generateNotificationContent = (
     subjectName: subjectName,
     subjectCount: subjectCount,
     diContent:
-      countWords(diContent) > 5
+      diContent && countWords(diContent) > 5
         ? getFirstWords(diContent, 5) + '...'
         : diContent,
   };
@@ -73,7 +73,7 @@ export function generateUrl(type: number, id: string) {
     case 2:
       return `/post/${id}`;
     case 3:
-      return `following?following=${id}`;
+      return `/profile/${id}`;
     default:
       return '';
   }

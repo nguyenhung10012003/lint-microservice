@@ -155,13 +155,13 @@ export class NotificationService implements OnModuleInit {
             name: subject.name,
             imageUrl: subject.avatar,
           },
-          url: generateUrl(type, subject.id),
+          url: generateUrl(type, payload.subjectId),
           userId: payload.diId,
           postId: null,
         };
         break;
     }
-
+    console.log(data);
     await this.upsert(data);
   }
 
