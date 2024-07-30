@@ -23,7 +23,6 @@ export class AuthService implements OnModuleInit {
   }
 
   async signup(data: { email: string; password: string }) {
-    console.log(data);
     const request = {
       email: data.email,
       password: data.password,
